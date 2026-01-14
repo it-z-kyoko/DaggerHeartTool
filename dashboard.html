@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="de" data-bs-theme="dark">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard</title>
+
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <style>
+        :root {
+            --brand: #a78bfa;
+            --brand2: #22c55e;
+            --ink: rgba(255, 255, 255, .90);
+            --muted: rgba(255, 255, 255, .70);
+            --surface: rgba(255, 255, 255, .06);
+            --surface2: rgba(255, 255, 255, .10);
+            --border: rgba(255, 255, 255, .12);
+            --navbg: rgba(0, 0, 0, .35);
+        }
+
+        body {
+            color: var(--ink);
+            background:
+                radial-gradient(1100px 520px at 18% 10%, rgba(167, 139, 250, .22), transparent 60%),
+                radial-gradient(900px 500px at 80% 25%, rgba(34, 197, 94, .12), transparent 60%),
+                linear-gradient(0deg, rgba(255, 255, 255, .02), rgba(255, 255, 255, .02));
+            min-height: 100vh;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .glass {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .btn-brand {
+            --bs-btn-bg: var(--brand);
+            --bs-btn-border-color: var(--brand);
+            --bs-btn-hover-bg: #8b5cf6;
+            --bs-btn-hover-border-color: #8b5cf6;
+            --bs-btn-focus-shadow-rgb: 167, 139, 250;
+            --bs-btn-color: #0b0b0f;
+            font-weight: 700;
+        }
+
+        .panel {
+            border-radius: 1rem;
+            padding: 1.25rem;
+        }
+
+        .panel-title {
+            letter-spacing: -0.02em;
+            margin-bottom: .75rem;
+        }
+
+        .panel-subtitle {
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .feature {
+            transition: transform .15s ease, background .15s ease, border-color .15s ease;
+            height: 100%;
+        }
+
+        .feature:hover {
+            transform: translateY(-2px);
+            background: var(--surface2);
+            border-color: rgba(255, 255, 255, .18);
+        }
+
+        .icon-pill {
+            width: 44px;
+            height: 44px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .12);
+        }
+
+        /* Character cards (dashboard look, no default bootstrap card chrome) */
+        .char-card {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            padding: .9rem;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid rgba(255, 255, 255, .12);
+            text-decoration: none;
+            color: var(--ink);
+            transition: transform .15s ease, background .15s ease, border-color .15s ease;
+        }
+
+        .char-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, .08);
+            border-color: rgba(255, 255, 255, .18);
+            color: var(--ink);
+        }
+
+        .char-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 1px solid rgba(255, 255, 255, .14);
+            background: rgba(255, 255, 255, .06);
+        }
+
+        .char-name {
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .char-meta {
+            margin: .15rem 0 0 0;
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        /* -----------------------------
+       LIGHT THEME FIXES
+       ----------------------------- */
+        html[data-bs-theme="light"] {
+            --ink: rgba(13, 15, 18, .92);
+            --muted: rgba(13, 15, 18, .68);
+            --surface: rgba(13, 15, 18, .04);
+            --surface2: rgba(13, 15, 18, .07);
+            --border: rgba(13, 15, 18, .12);
+            --navbg: rgba(255, 255, 255, .70);
+        }
+
+        html[data-bs-theme="light"] body {
+            color: var(--ink);
+            background:
+                radial-gradient(1100px 520px at 18% 10%, rgba(167, 139, 250, .20), transparent 62%),
+                radial-gradient(900px 500px at 80% 25%, rgba(34, 197, 94, .10), transparent 62%),
+                linear-gradient(0deg, rgba(0, 0, 0, .02), rgba(0, 0, 0, .02));
+        }
+    </style>
+</head>
+
+<body>
+    <header class="py-5">
+        <div class="container">
+            <div class="glass panel">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                    <div>
+                        <div class="text-uppercase muted" style="letter-spacing:.14em;font-size:.78rem;">Dashboard</div>
+                        <h1 class="mb-1" style="letter-spacing:-0.03em;line-height:1.05;">Willkommen zurück</h1>
+                        <div class="muted">Verwalte Charaktere, Kampagnen und deine Sessions an einem Ort.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container pb-5">
+        <div class="row g-3 align-items-stretch">
+            <!-- Deine Charaktere -->
+            <div class="col-12 col-lg-5">
+                <section class="glass panel feature h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h3 class="panel-title mb-0">Deine Charaktere</h3>
+                            <div class="panel-subtitle mb-0">Schnellzugriff auf deine zuletzt genutzten Bögen.</div>
+                        </div>
+                        <span class="icon-pill" aria-hidden="true"><i class="bi bi-person-badge"></i></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <!-- Beispiel: Charakter 1 -->
+                        <a class="char-card" href="#">
+                            <!-- Wichtig: nutze einen RELATIVEN Pfad, z.B. img/char1.jpg -->
+                            <img class="char-avatar" src="img/char-placeholder.jpg" alt="Charakterbild" />
+                            <div class="flex-grow-1">
+                                <p class="char-name">Charakter Name</p>
+                            </div>
+                            <i class="bi bi-chevron-right muted"></i>
+                        </a>
+
+                        <!-- Beispiel: Charakter 2 -->
+                        <a class="char-card" href="#">
+                            <img class="char-avatar" src="img/char-placeholder.jpg" alt="Charakterbild" />
+                            <div class="flex-grow-1">
+                                <p class="char-name">Charakter Name</p>
+                            </div>
+                            <i class="bi bi-chevron-right muted"></i>
+                        </a>
+                    </div>
+
+                    <hr class="my-4" style="border-top:1px solid rgba(255,255,255,.10);" />
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-brand flex-grow-1">
+                            <i class="bi bi-person-plus me-2"></i>Charakter erstellen
+                        </button>
+                        <button class="btn btn-outline-light">
+                            <i class="bi bi-collection me-2"></i>Alle
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Deine Kampagnen -->
+            <div class="col-12 col-lg-5">
+                <section class="glass panel feature h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h3 class="panel-title mb-0">Deine Kampagnen</h3>
+                            <div class="panel-subtitle mb-0">Erstellen, verwalten und Sessions tracken.</div>
+                        </div>
+                        <span class="icon-pill" aria-hidden="true"><i class="bi bi-journal-bookmark"></i></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a class="char-card" href="#">
+                            <img class="char-avatar" src="img/char-placeholder.jpg" alt="Kampagnenbild" />
+                            <div class="flex-grow-1">
+                                <p class="char-name">Nebelpfad</p>
+                                <p class="char-meta">5 Spieler • Letzte Session: 12.01.2026</p>
+                            </div>
+                            <i class="bi bi-chevron-right muted"></i>
+                        </a>
+
+                        <a class="char-card" href="#">
+                            <img class="char-avatar" src="img/char-placeholder.jpg" alt="Kampagnenbild" />
+                            <div class="flex-grow-1">
+                                <p class="char-name">Splittermond</p>
+                                <p class="char-meta">3 Spieler • Vorbereitung offen</p>
+                            </div>
+                            <i class="bi bi-chevron-right muted"></i>
+                        </a>
+                    </div>
+
+                    <hr class="my-4" style="border-top:1px solid rgba(255,255,255,.10);" />
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-light flex-grow-1 sticky-bottom">
+                            <i class="bi bi-kanban me-2"></i>Sessions ansehen
+                        </button>
+                        <button class="btn btn-outline-light">
+                            <i class="bi bi-people me-2"></i>Spieler
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Erstelle eine Kampagne -->
+            <div class="col-12 col-lg-2">
+                <section class="glass panel feature h-100 d-flex flex-column">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div>
+                            <h3 class="panel-title mb-0" style="font-size:1.15rem;">Neue Kampagne</h3>
+                            <div class="panel-subtitle mb-0">Schnellstart.</div>
+                        </div>
+                        <span class="icon-pill" aria-hidden="true"><i class="bi bi-plus-square"></i></span>
+                    </div>
+
+                    <div class="mt-auto d-grid gap-2">
+                        <button class="btn btn-brand w-100">
+                            <i class="bi bi-plus-lg me-2"></i>Neu
+                        </button>
+                        <button class="btn btn-outline-light w-100">
+                            <i class="bi bi-file-earmark-text me-2"></i>Vorlage
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Neuigkeiten -->
+        <div class="row g-3 mt-3">
+            <div class="col-12">
+                <section class="glass panel feature">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div>
+                            <h3 class="panel-title mb-0">Neuigkeiten</h3>
+                            <div class="panel-subtitle mb-0">Updates und Ankündigungen rund um das Tool.</div>
+                        </div>
+                        <span class="icon-pill" aria-hidden="true"><i class="bi bi-megaphone"></i></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <div class="glass panel" style="padding:1rem;border-radius:1rem;">
+                            <div class="d-flex justify-content-between gap-3 flex-wrap">
+                                <strong>Changelog</strong>
+                                <span class="muted">14.01.2026</span>
+                            </div>
+                            <div class="muted mt-1">Dashboard-Layout vereinheitlicht, Panels & Hover-States angepasst.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
