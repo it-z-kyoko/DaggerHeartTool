@@ -32,7 +32,9 @@
       min-height: 100vh;
     }
 
-    .muted { color: var(--muted); }
+    .muted {
+      color: var(--muted);
+    }
 
     .glass {
       background: var(--surface);
@@ -42,7 +44,9 @@
       border-radius: 1.25rem;
     }
 
-    .panel { padding: 1.25rem; }
+    .panel {
+      padding: 1.25rem;
+    }
 
     .btn-brand {
       --bs-btn-bg: var(--brand);
@@ -150,7 +154,9 @@
     }
 
     @media (max-width: 992px) {
-      .wizard { grid-template-columns: 1fr; }
+      .wizard {
+        grid-template-columns: 1fr;
+      }
     }
 
     .steps {
@@ -197,9 +203,21 @@
       flex: 0 0 auto;
     }
 
-    .step-meta { min-width: 0; }
-    .step-title { font-weight: 800; margin: 0; line-height: 1.1; }
-    .step-desc { margin: .15rem 0 0 0; color: var(--muted); font-size: .9rem; }
+    .step-meta {
+      min-width: 0;
+    }
+
+    .step-title {
+      font-weight: 800;
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .step-desc {
+      margin: .15rem 0 0 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
 
     .progress-pill {
       display: flex;
@@ -216,12 +234,12 @@
       flex: 1;
       height: 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255, 255, 255, .12);
+      background: rgba(255, 255, 255, .04);
       overflow: hidden;
     }
 
-    .progress-pill .bar > div {
+    .progress-pill .bar>div {
       height: 100%;
       width: 0%;
       background: rgba(167, 139, 250, .55);
@@ -234,12 +252,14 @@
       gap: .5rem .75rem;
       align-items: baseline;
     }
+
     .kv .k {
-      color: rgba(255,255,255,.70);
+      color: rgba(255, 255, 255, .70);
       text-transform: uppercase;
       letter-spacing: .10em;
       font-size: .78rem;
     }
+
     .kv .v {
       color: var(--ink);
       overflow-wrap: anywhere;
@@ -251,8 +271,11 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: .75rem;
     }
+
     @media (max-width: 576px) {
-      .stat-inputs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .stat-inputs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .pill {
@@ -261,8 +284,8 @@
       gap: .4rem;
       padding: .25rem .55rem;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255, 255, 255, .12);
+      background: rgba(255, 255, 255, .04);
       font-size: .85rem;
       color: var(--muted);
       white-space: nowrap;
@@ -278,8 +301,13 @@
     }
 
     /* Hide steps */
-    .step-panel { display: none; }
-    .step-panel.active { display: block; }
+    .step-panel {
+      display: none;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
   </style>
 </head>
 
@@ -347,16 +375,16 @@
           <button class="step-btn" type="button" data-step="3">
             <span class="step-num">3</span>
             <span class="step-meta">
-              <p class="step-title">Defense & Health</p>
-              <p class="step-desc">Evasion, armor, HP, stress.</p>
+              <p class="step-title">Defense, Health & Hope</p>
+              <p class="step-desc">Evasion, armor, HP, Hope</p>
             </span>
           </button>
 
           <button class="step-btn" type="button" data-step="4">
             <span class="step-num">4</span>
             <span class="step-meta">
-              <p class="step-title">Hope & Experience</p>
-              <p class="step-desc">Hope track + tags/notes.</p>
+              <p class="step-title">Experience</p>
+              <p class="step-desc">Experience List</p>
             </span>
           </button>
 
@@ -364,7 +392,7 @@
             <span class="step-num">5</span>
             <span class="step-meta">
               <p class="step-title">Gear</p>
-              <p class="step-desc">Weapons, armor, inventory, gold.</p>
+              <p class="step-desc">Weapons, inventory, gold.</p>
             </span>
           </button>
 
@@ -387,35 +415,43 @@
             </div>
 
             <div class="row g-3">
-              <div class="col-12 col-lg-6">
+              <div class="col-12 col-lg-5">
                 <div class="field">
                   <label for="cName">Name</label>
                   <input id="cName" type="text" placeholder="Character name" />
                 </div>
               </div>
 
-              <div class="col-12 col-lg-6">
+              <div class="col-12 col-lg-5">
                 <div class="field">
                   <label for="cPronouns">Pronouns</label>
                   <input id="cPronouns" type="text" placeholder="they/them" />
                 </div>
               </div>
 
-              <div class="col-12 col-lg-4">
+
+              <div class="col-12 col-lg-2">
+                <div class="field">
+                  <label for="cLevel">Level</label>
+                  <input id="cLevel" type="number" min="1" value="1" />
+                </div>
+              </div>
+
+              <div class="col-12 col-lg-3">
                 <div class="field">
                   <label for="cHeritage">Heritage</label>
                   <input id="cHeritage" type="text" placeholder="e.g. Human, Elf, ..." />
                 </div>
               </div>
 
-              <div class="col-12 col-lg-4">
+              <div class="col-12 col-lg-3">
                 <div class="field">
                   <label for="cClass">Class</label>
                   <input id="cClass" type="text" placeholder="e.g. Guardian, Seraph, ..." />
                 </div>
               </div>
 
-              <div class="col-12 col-lg-4">
+              <div class="col-12 col-lg-3">
                 <div class="field">
                   <label for="cSubClass">Subclass</label>
                   <input id="cSubClass" type="text" placeholder="e.g. Oathbound, ..." />
@@ -424,15 +460,8 @@
 
               <div class="col-12 col-lg-3">
                 <div class="field">
-                  <label for="cLevel">Level</label>
-                  <input id="cLevel" type="number" min="1" value="1" />
-                </div>
-              </div>
-
-              <div class="col-12 col-lg-9">
-                <div class="field">
-                  <label for="cConcept">Concept</label>
-                  <input id="cConcept" type="text" placeholder="One-line concept (optional)" />
+                  <label for="cCommunity">Community</label>
+                  <input id="cCommunity" type="text" placeholder="Wanderborn" />
                 </div>
               </div>
             </div>
@@ -446,7 +475,7 @@
             </div>
 
             <div class="muted mb-3">
-              Enter the six trait modifiers used by your sheet. If you want, enforce your own limits via min/max.
+              Set your character's six trait modifiers using the following list (+2,+1,+1,0,0,-1).
             </div>
 
             <div class="stat-inputs">
@@ -500,7 +529,7 @@
           <!-- STEP 3 -->
           <div class="step-panel" data-step-panel="3">
             <div class="block-title">
-              <h3>Defense & Health</h3>
+              <h3>Defense, Health & Hope</h3>
               <span class="chip"><i class="bi bi-shield-heart"></i> Survival</span>
             </div>
 
@@ -522,13 +551,44 @@
                     <div class="col-6">
                       <div class="field mb-0">
                         <label for="cArmor">Armor</label>
-                        <input id="cArmor" type="number" min="0" value="0" />
+                        <input id="cArmor" type="number" min="0" readonly />
                       </div>
                     </div>
                   </div>
+
+
+                  <div class="divider"></div>
+                  <div class="block-title">
+                    <h3>Armor</h3>
+                    <span class="chip"><i class="bi bi-shield"></i> Loadout</span>
+                  </div>
+
+                  <div class="field">
+                    <label for="aName">Active Armor</label>
+                    <input id="aName" type="text" placeholder="Leather armor" />
+                  </div>
+
+                  <div class="row g-3">
+                    <div class="col-6">
+                      <div class="field mb-0">
+                        <label for="aThresh">Base Thresholds</label>
+                        <input id="aThresh" type="text" placeholder="Minor/Major/Severe" />
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="field mb-0">
+                        <label for="aScore">Base Score</label>
+                        <input id="aScore" type="text" placeholder="+2" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="field mt-3">
+                    <label for="aFeat">Armor Feature</label>
+                    <input id="aFeat" type="text" placeholder="Light, Resistance..." />
+                  </div>
                 </div>
               </div>
-
               <div class="col-12 col-lg-6">
                 <div class="sheet-block">
                   <div class="block-title">
@@ -539,41 +599,27 @@
                   <div class="row g-3">
                     <div class="col-6">
                       <div class="field mb-0">
-                        <label for="cHPMax">HP (max)</label>
+                        <label for="cHPMax">HP</label>
                         <input id="cHPMax" type="number" min="0" value="10" />
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <div class="field mb-0">
-                        <label for="cStressMax">Stress (max)</label>
-                        <input id="cStressMax" type="number" min="0" value="10" />
                       </div>
                     </div>
                   </div>
 
                   <div class="divider"></div>
-
-                  <div class="row g-3">
-                    <div class="col-4">
-                      <div class="field mb-0">
-                        <label for="dMinor">Minor slots</label>
-                        <input id="dMinor" type="number" min="0" value="6" />
-                      </div>
-                    </div>
-                    <div class="col-4">
-                      <div class="field mb-0">
-                        <label for="dMajor">Major slots</label>
-                        <input id="dMajor" type="number" min="0" value="4" />
-                      </div>
-                    </div>
-                    <div class="col-4">
-                      <div class="field mb-0">
-                        <label for="dSevere">Severe slots</label>
-                        <input id="dSevere" type="number" min="0" value="3" />
-                      </div>
-                    </div>
+                  <div class="block-title">
+                    <h3>Hope</h3>
+                    <span class="chip"><i class="bi bi-stars"></i> Resource</span>
                   </div>
 
+                  <div class="field">
+                    <label for="hopeMax">Hope</label>
+                    <input id="hopeMax" type="number" min="0" value="6" readonly />
+                  </div>
+
+                  <div class="field mb-0">
+                    <label for="cHopeFeature">Hope Feature</label>
+                    <textarea id="cHopeFeature" readonly></textarea>
+                  </div>
                 </div>
               </div>
             </div>
@@ -587,26 +633,7 @@
             </div>
 
             <div class="row g-3">
-              <div class="col-12 col-lg-5">
-                <div class="sheet-block">
-                  <div class="block-title">
-                    <h3>Hope</h3>
-                    <span class="chip"><i class="bi bi-stars"></i> Resource</span>
-                  </div>
-
-                  <div class="field">
-                    <label for="hopeMax">Hope (max)</label>
-                    <input id="hopeMax" type="number" min="0" value="6" readonly />
-                  </div>
-
-                  <div class="field mb-0">
-                    <label for="cHopeFeature">Hope Feature</label>
-                    <textarea id="cHopeFeature" placeholder="What does Hope enable for your character?" readonly></textarea>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-12 col-lg-7">
+              <div class="col-12">
                 <div class="sheet-block">
                   <div class="block-title">
                     <h3>Experience</h3>
@@ -639,131 +666,95 @@
                   </div>
 
                   <div class="row g-3">
-                    <div class="col-12 col-xl-6">
+                    <div class="">
                       <div class="sheet-block" style="padding:.85rem;">
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                          <strong>Primary</strong>
-                          <span class="muted small">Proficiency (0-6)</span>
+                        <div>
+                          <div class="d-flex align-items-center justify-content-between mb-2">
+                            <strong>Primary</strong>
+                            <span class="muted small">Proficiency (0-6)</span>
+                          </div>
+                          <div class="row g-2">
+                            <div class="col-12">
+                              <div class="field mb-0">
+                                <label>Name</label>
+                                <input id="w1Name" type="text" placeholder="Longbow" />
+                              </div>
+                            </div>
+                            <div class="col-6">
+                              <div class="field mb-0">
+                                <label>Trait &amp; Range</label>
+                                <input id="w1Trait" type="text" placeholder="Agility • Far" />
+                              </div>
+                            </div>
+                            <div class="col-6">
+                              <div class="field mb-0">
+                                <label>Damage</label>
+                                <input id="w1Dmg" type="text" placeholder="d8 • Piercing" />
+                              </div>
+                            </div>
+                            <div class="col-12">
+                              <div class="field mb-0">
+                                <label>Feature</label>
+                                <input id="w1Feat" type="text" placeholder="Special rule..." />
+                              </div>
+                            </div>
+                            <div class="col-6">
+                              <div class="field mb-0">
+                                <label>Proficiency</label>
+                                <input id="w1Prof" type="number" min="0" max="6" value="0" />
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div class="row g-2">
-                          <div class="col-12">
-                            <div class="field mb-0">
-                              <label>Name</label>
-                              <input id="w1Name" type="text" placeholder="Longbow" />
-                            </div>
+                        <div class="divider"></div>
+                        <div>
+                          <div class="d-flex align-items-center justify-content-between mb-2">
+                            <strong>Secondary</strong>
+                            <span class="muted small">Proficiency (0-6)</span>
                           </div>
-                          <div class="col-6">
-                            <div class="field mb-0">
-                              <label>Trait &amp; Range</label>
-                              <input id="w1Trait" type="text" placeholder="Agility • Far" />
+                          <div class="row g-2">
+                            <div class="col-12">
+                              <div class="field mb-0">
+                                <label>Name</label>
+                                <input id="w2Name" type="text" placeholder="Dagger" />
+                              </div>
                             </div>
-                          </div>
-                          <div class="col-6">
-                            <div class="field mb-0">
-                              <label>Damage</label>
-                              <input id="w1Dmg" type="text" placeholder="d8 • Piercing" />
+                            <div class="col-6">
+                              <div class="field mb-0">
+                                <label>Trait &amp; Range</label>
+                                <input id="w2Trait" type="text" placeholder="Finesse • Close" />
+                              </div>
                             </div>
-                          </div>
-                          <div class="col-12">
-                            <div class="field mb-0">
-                              <label>Feature</label>
-                              <input id="w1Feat" type="text" placeholder="Special rule..." />
+                            <div class="col-6">
+                              <div class="field mb-0">
+                                <label>Damage</label>
+                                <input id="w2Dmg" type="text" placeholder="d6 • Slashing" />
+                              </div>
                             </div>
-                          </div>
-                          <div class="col-6">
-                            <div class="field mb-0">
-                              <label>Proficiency</label>
-                              <input id="w1Prof" type="number" min="0" max="6" value="0" />
+                            <div class="col-12">
+                              <div class="field mb-0">
+                                <label>Feature</label>
+                                <input id="w2Feat" type="text" placeholder="Special rule..." />
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-12 col-xl-6">
-                      <div class="sheet-block" style="padding:.85rem;">
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                          <strong>Secondary</strong>
-                          <span class="muted small">Proficiency (0-6)</span>
-                        </div>
-                        <div class="row g-2">
-                          <div class="col-12">
-                            <div class="field mb-0">
-                              <label>Name</label>
-                              <input id="w2Name" type="text" placeholder="Dagger" />
-                            </div>
-                          </div>
-                          <div class="col-6">
-                            <div class="field mb-0">
-                              <label>Trait &amp; Range</label>
-                              <input id="w2Trait" type="text" placeholder="Finesse • Close" />
-                            </div>
-                          </div>
-                          <div class="col-6">
-                            <div class="field mb-0">
-                              <label>Damage</label>
-                              <input id="w2Dmg" type="text" placeholder="d6 • Slashing" />
-                            </div>
-                          </div>
-                          <div class="col-12">
-                            <div class="field mb-0">
-                              <label>Feature</label>
-                              <input id="w2Feat" type="text" placeholder="Special rule..." />
-                            </div>
-                          </div>
-                          <div class="col-6">
-                            <div class="field mb-0">
-                              <label>Proficiency</label>
-                              <input id="w2Prof" type="number" min="0" max="6" value="0" />
+                            <div class="col-6">
+                              <div class="field mb-0">
+                                <label>Proficiency</label>
+                                <input id="w2Prof" type="number" min="0" max="6" value="0" />
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-
                 </div>
               </div>
-
               <div class="col-12 col-lg-5">
                 <div class="sheet-block">
-                  <div class="block-title">
-                    <h3>Armor, Inventory, Gold</h3>
-                    <span class="chip"><i class="bi bi-shield"></i> Loadout</span>
-                  </div>
-
-                  <div class="field">
-                    <label for="aName">Active Armor (name)</label>
-                    <input id="aName" type="text" placeholder="Leather armor" />
-                  </div>
-
-                  <div class="row g-3">
-                    <div class="col-6">
-                      <div class="field mb-0">
-                        <label for="aThresh">Base Thresholds</label>
-                        <input id="aThresh" type="text" placeholder="Minor/Major/Severe" />
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <div class="field mb-0">
-                        <label for="aScore">Base Score</label>
-                        <input id="aScore" type="text" placeholder="+2" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="field mt-3">
-                    <label for="aFeat">Armor Feature</label>
-                    <input id="aFeat" type="text" placeholder="Light, Resistance..." />
-                  </div>
-
-                  <div class="divider"></div>
-
                   <div class="field">
                     <label for="cInventory">Inventory</label>
-                    <textarea id="cInventory" placeholder="- Rope (15m)
-- Torches (x3)
-- Potion (x1)"></textarea>
+                    <textarea id="cInventory"></textarea>
                   </div>
 
                   <div class="divider"></div>
@@ -795,6 +786,8 @@
 
                 </div>
               </div>
+
+
             </div>
           </div>
 
@@ -817,12 +810,18 @@
               <div class="divider"></div>
 
               <div class="kv">
-                <div class="k">Name</div><div class="v" id="sumName">—</div>
-                <div class="k">Pronouns</div><div class="v" id="sumPronouns">—</div>
-                <div class="k">Heritage</div><div class="v" id="sumHeritage">—</div>
-                <div class="k">Class</div><div class="v" id="sumClass">—</div>
-                <div class="k">Subclass</div><div class="v" id="sumSubClass">—</div>
-                <div class="k">Level</div><div class="v" id="sumLevel">—</div>
+                <div class="k">Name</div>
+                <div class="v" id="sumName">—</div>
+                <div class="k">Pronouns</div>
+                <div class="v" id="sumPronouns">—</div>
+                <div class="k">Heritage</div>
+                <div class="v" id="sumHeritage">—</div>
+                <div class="k">Class</div>
+                <div class="v" id="sumClass">—</div>
+                <div class="k">Subclass</div>
+                <div class="v" id="sumSubClass">—</div>
+                <div class="k">Level</div>
+                <div class="v" id="sumLevel">—</div>
 
                 <div class="k">Traits</div>
                 <div class="v" id="sumTraits">—</div>
@@ -958,14 +957,14 @@
         const set = (id, val) => document.getElementById(id).value = val;
 
         if (p === 'balanced') {
-          ['tAgility','tStrength','tFinesse','tInstinct','tPresence','tKnowledge'].forEach(id => set(id, 0));
+          ['tAgility', 'tStrength', 'tFinesse', 'tInstinct', 'tPresence', 'tKnowledge'].forEach(id => set(id, 0));
         }
         if (p === 'agile') {
-          ['tAgility','tStrength','tFinesse','tInstinct','tPresence','tKnowledge'].forEach(id => set(id, 0));
+          ['tAgility', 'tStrength', 'tFinesse', 'tInstinct', 'tPresence', 'tKnowledge'].forEach(id => set(id, 0));
           set('tAgility', 2);
         }
         if (p === 'strong') {
-          ['tAgility','tStrength','tFinesse','tInstinct','tPresence','tKnowledge'].forEach(id => set(id, 0));
+          ['tAgility', 'tStrength', 'tFinesse', 'tInstinct', 'tPresence', 'tKnowledge'].forEach(id => set(id, 0));
           set('tStrength', 2);
         }
         updateSummary();
