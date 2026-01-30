@@ -1,38 +1,72 @@
-<!-- Top Nav (User-facing) -->
-  <nav class="navbar navbar-expand-lg nav-blur sticky-top">
-    <div class="container py-2">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="#top">
-        <span class="brand-mark"><i class="bi bi-dice-5"></i></span>
-        <span class="fw-semibold">Daggerheart Nexus</span>
-      </a>
+<!-- /Global/nav.html  (refreshed for your current PHP setup)
+     - English labels
+     - Correct links: /Login/login.php and /Login/signup.php
+     - Brand goes to /index.php (not #top so it works everywhere)
+     - Theme toggle kept (JS stays here, and index.php can remove its duplicate toggle script)
+-->
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
-              aria-controls="nav" aria-expanded="false" aria-label="Navigation umschalten">
-        <span class="navbar-toggler-icon"></span>
-      </button>
+<nav class="navbar navbar-expand-lg nav-blur sticky-top">
+  <div class="container py-2">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/index.php">
+      <span class="brand-mark"><i class="bi bi-dice-5"></i></span>
+      <span class="fw-semibold">Daggerheart Nexus</span>
+    </a>
 
-      <div class="collapse navbar-collapse" id="nav">
-        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
-          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-          <li class="nav-item"><a class="nav-link" href="#how">So funktioniert’s</a></li>
-          <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
+            aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-          <li class="nav-item ms-lg-2">
-            <a class="btn btn-ghost btn-sm" href="login.html">
-              <i class="bi bi-box-arrow-in-right me-1"></i> Log in
-            </a>
-          </li>
-          <li class="nav-item ms-lg-2">
-            <a class="btn btn-brand btn-sm" href="signup.html">
-              <i class="bi bi-stars me-1"></i> Kostenlos starten
-            </a>
-          </li>
-          <li class="nav-item ms-lg-2">
-            <button id="themeToggle" class="btn btn-sm btn-outline-secondary" type="button" aria-label="Theme umschalten">
-              <i class="bi bi-moon-stars me-1"></i> Dark
-            </button>
-          </li>
-        </ul>
-      </div>
+    <div class="collapse navbar-collapse" id="nav">
+      <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+        <!-- Anchor links work on index.php; on other pages they jump back to index sections -->
+        <li class="nav-item"><a class="nav-link" href="/index.php#features">Features</a></li>
+        <li class="nav-item"><a class="nav-link" href="/index.php#how">How it works</a></li>
+        <li class="nav-item"><a class="nav-link" href="/index.php#faq">FAQ</a></li>
+
+        <li class="nav-item ms-lg-2">
+          <a class="btn btn-ghost btn-sm" href="/Login/login.php">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Sign in
+          </a>
+        </li>
+        <li class="nav-item ms-lg-2">
+          <a class="btn btn-brand btn-sm" href="/Login/signup.php">
+            <i class="bi bi-stars me-1"></i> Get started
+          </a>
+        </li>
+
+        <li class="nav-item ms-lg-2">
+          <button id="themeToggle" class="btn btn-sm btn-outline-secondary" type="button" aria-label="Toggle theme">
+            <i class="bi bi-moon-stars me-1"></i> Dark
+          </button>
+        </li>
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
+
+<script>
+  // Theme toggle (dark/light)
+  (function () {
+    const themeToggle = document.querySelector("#themeToggle");
+    if (!themeToggle) return;
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute("data-bs-theme", theme);
+      localStorage.setItem("theme", theme);
+      themeToggle.innerHTML = theme === "dark"
+        ? '<i class="bi bi-moon-stars me-1"></i> Dark'
+        : '<i class="bi bi-sun me-1"></i> Light';
+    }
+
+    // init
+    const saved = localStorage.getItem("theme");
+    setTheme(saved === "light" ? "light" : "dark");
+
+    // toggle
+    themeToggle.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-bs-theme") || "dark";
+      setTheme(current === "dark" ? "light" : "dark");
+    });
+  })();
+</script>

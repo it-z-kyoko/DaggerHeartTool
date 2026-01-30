@@ -1,3 +1,13 @@
+<?php
+session_start();
+if (empty($_SESSION['auth']['username'])) {
+  header("Location: /Login/signin.php");
+  exit;
+}
+?>
+<!-- dein dashboard html hier -->
+
+
 <!doctype html>
 <html lang="de" data-bs-theme="dark">
 
