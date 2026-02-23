@@ -1,9 +1,9 @@
 <?php
 /* ============================================================
-   FILE 2: /Login/api_login.php  (API ONLY)
+   FILE: /Login/api_login.php  (API ONLY)
    - POST JSON: { username, password }
-   - Validates against user(username, passwordHash)
-   - Sets session on success
+   - Validates against user(userID, username, password)
+   - Sets session on success: $_SESSION['userID'] + $_SESSION['auth']
    - Returns JSON
    ============================================================ */
 
@@ -50,11 +50,20 @@ if (!file_exists($dbFile)) {
 
 $db = Database::getInstance($dbFile);
 
-// Ensure table exists (optional)
+/**
+ * WICHTIG:
+ * Du hast bereits eine user-Tabelle mit:
+ *   userID (INTEGER, AUTOINCREMENT), username, password, picture
+ *
+ * Daher NICHT mehr die alte Tabelle (username PRIMARY KEY) erzeugen!
+ * Wir lassen optional ein "CREATE TABLE IF NOT EXISTS" drin, aber passend zu deinem Schema.
+ */
 $db->execute("
   CREATE TABLE IF NOT EXISTS user (
-    username TEXT PRIMARY KEY,
-    password TEXT NOT NULL
+    userID   INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password TEXT NOT NULL,
+    picture  TEXT
   );
 ");
 
@@ -66,21 +75,20 @@ if ($username === '' || $password === '') {
   jsonResponse(400, ['ok' => false, 'message' => 'Bitte Benutzername und Passwort angeben.']);
 }
 
-// Optional username rules (same as register, keeps consistency)
-if (strlen($username) < 3 || strlen($username) > 32) {
-  jsonResponse(400, ['ok' => false, 'message' => 'Benutzername muss 3–32 Zeichen lang sein.']);
-}
-if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $username)) {
-  jsonResponse(400, ['ok' => false, 'message' => 'Ungültiger Benutzername.']);
-}
-
 $row = $db->fetch(
-  "SELECT username, password FROM user WHERE username = :u LIMIT 1",
+  "SELECT userID, username, password
+   FROM user
+   WHERE username = :u
+   LIMIT 1",
   [':u' => $username]
 );
 
 // Uniform error message (don’t leak whether user exists)
-if (!$row || !isset($row['password']) || !password_verify($password, (string)$row['password'])) {
+if (
+  !$row
+  || !isset($row['password'])
+  || !password_verify($password, (string)$row['password'])
+) {
   usleep(120000); // 120ms
   jsonResponse(401, ['ok' => false, 'message' => 'Login fehlgeschlagen.']);
 }
@@ -90,21 +98,26 @@ if (password_needs_rehash((string)$row['password'], PASSWORD_DEFAULT)) {
   $newHash = password_hash($password, PASSWORD_DEFAULT);
   if ($newHash !== false) {
     $db->execute(
-      "UPDATE user SET password = :p WHERE username = :u",
-      [':p' => $newHash, ':u' => $username]
+      "UPDATE user SET password = :p WHERE userID = :id",
+      [':p' => $newHash, ':id' => (int)$row['userID']]
     );
   }
 }
 
-// Session
+// Session (WICHTIG: userID setzen, damit creator.php nicht redirectet)
 session_regenerate_id(true);
+
+$_SESSION['userID'] = (int)$row['userID'];
 $_SESSION['auth'] = [
-  'username' => $row['username'],
+  'username' => (string)$row['username'],
   'logged_in_at' => time(),
 ];
 
 jsonResponse(200, [
   'ok' => true,
   'redirect' => '/dashboard.php',
-  'user' => ['username' => $row['username']]
+  'user' => [
+    'userID' => (int)$row['userID'],
+    'username' => (string)$row['username']
+  ]
 ]);

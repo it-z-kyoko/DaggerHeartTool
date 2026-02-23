@@ -436,3 +436,71 @@ body {
 }
 
 /* End of merged stylesheet */
+
+/* =========================================
+   GLASS DROPDOWN STYLE
+   Für Bootstrap 5 form-select
+========================================= */
+
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --glass-hover-border: rgba(167, 139, 250, 0.6);
+    --glass-focus-border: #a78bfa;
+    --glass-text: rgba(255, 255, 255, 0.9);
+    --glass-placeholder: rgba(255, 255, 255, 0.5);
+}
+
+/* Basis Glass Effekt */
+select.form-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border: 1px solid var(--glass-border);
+    border-radius: 1rem;
+
+    padding: 0.65rem 2.8rem 0.65rem 1rem;
+
+    color: var(--glass-text);
+    font-weight: 500;
+
+    transition: all 0.2s ease;
+}
+
+/* Custom Arrow */
+select.form-select {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='%23a78bfa' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 7l5 5 5-5H5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 16px;
+}
+
+/* Hover */
+select.form-select:hover {
+    border-color: var(--glass-hover-border);
+    box-shadow: 0 0 0 0.15rem rgba(167, 139, 250, 0.15);
+}
+
+/* Focus */
+select.form-select:focus {
+    border-color: var(--glass-focus-border);
+    box-shadow: 0 0 0 0.2rem rgba(167, 139, 250, 0.25);
+    outline: none;
+}
+
+/* Disabled */
+select.form-select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Option Styling (Begrenzt durch Browser) */
+select.form-select option {
+    background-color: #1c1d24;
+    color: #ffffff;
+}
