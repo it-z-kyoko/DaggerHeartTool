@@ -60,6 +60,8 @@ require_once __DIR__ . '/partials/header.php';
 ?>
 
 <header class="py-5">
+    <?php include __DIR__ . "/../Global/nav.html"; ?>
+
     <div class="container">
         <div class="glass panel">
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
@@ -107,7 +109,7 @@ require_once __DIR__ . '/partials/header.php';
                             $meta = implode(' • ', $parts);
                         ?>
                             <a class="char-card" href="/Character/view.php?id=<?= $charId ?>">
-                                <img class="char-avatar" src="img/char-placeholder.jpg" alt="Charakterbild" />
+                                <!--<img class="char-avatar" src="img/char-placeholder.jpg" alt="Charakterbild" /> -->
                                 <div class="flex-grow-1">
                                     <p class="char-name"><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></p>
                                     <p class="char-meta"><?= htmlspecialchars($meta, ENT_QUOTES, 'UTF-8') ?></p>
@@ -120,10 +122,10 @@ require_once __DIR__ . '/partials/header.php';
 
                 <hr class="my-4" style="border-top:1px solid rgba(255,255,255,.10);" />
                 <div class="d-flex gap-2">
-                    <a class="btn btn-brand flex-grow-1" href="/Character/create.php">
+                    <a class="btn btn-brand flex-grow-1" href="/CharacterCreator/creator.php">
                         <i class="bi bi-person-plus me-2"></i>Charakter erstellen
                     </a>
-                    <a class="btn btn-outline-light" href="/Character/list.php">
+                    <a class="btn btn-outline-light" href="/my_characters.php">
                         <i class="bi bi-collection me-2"></i>Alle
                     </a>
                 </div>
