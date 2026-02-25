@@ -58,16 +58,14 @@ $characters = $db->fetchAll(
 <link href="../Global/styles.css" rel="stylesheet">
 
 <style>
-.character-frame {
-    height: 650px;
-    width: 100%;
-    border: none;
-    overflow: auto;
+.character-frame{
+    height:650px;
+    width:100%;
+    border:none;
+    display:block;
 }
 
-.accordion-button {
-    font-weight: 600;
-}
+.accordion-button{ font-weight:600; }
 </style>
 </head>
 <body>
@@ -98,11 +96,20 @@ $characters = $db->fetchAll(
 
                 <div class="accordion-body p-0">
 
-                    <iframe
-                        id="frame<?= $ch['characterID'] ?>"
-                        class="character-frame"
-                        src="../CharacterSheet/charactersheet.php?characterID=<?= (int)$ch['characterID'] ?>">
-                    </iframe>
+                    <div class="frame-wrap position-relative"
+                         data-character-id="<?= (int)$ch['characterID'] ?>">
+
+                        <iframe
+                            class="character-frame frame-a"
+                            src="../CharacterSheet/charactersheet.php?characterID=<?= (int)$ch['characterID'] ?>&readonly=1">
+                        </iframe>
+
+                        <iframe
+                            class="character-frame frame-b d-none"
+                            src="about:blank">
+                        </iframe>
+
+                    </div>
 
                 </div>
             </div>
@@ -116,17 +123,54 @@ $characters = $db->fetchAll(
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-/* -------- Live Refresh --------
-   Alle 5 Sekunden werden geöffnete Frames neu geladen
----------------------------------- */
+/* -------- Live Refresh ohne Flackern + ohne Scroll-Sprung -------- */
+
+function refreshVisibleFrames() {
+
+  document.querySelectorAll('.accordion-collapse.show .frame-wrap')
+    .forEach(wrap => {
+
+      const cid = wrap.dataset.characterId;
+      const a = wrap.querySelector('.frame-a');
+      const b = wrap.querySelector('.frame-b');
+
+      const aVisible = !a.classList.contains('d-none');
+      const visible = aVisible ? a : b;
+      const hidden  = aVisible ? b : a;
+
+      // Scroll-Position sichern
+      let scrollTop = 0;
+      try {
+          scrollTop = visible.contentWindow.document.documentElement.scrollTop
+                   || visible.contentWindow.document.body.scrollTop
+                   || 0;
+      } catch(e) {}
+
+      const url = `../CharacterSheet/charactersheet.php?characterID=${encodeURIComponent(cid)}&readonly=1&t=${Date.now()}`;
+
+      hidden.onload = () => {
+
+          try {
+              hidden.contentWindow.document.documentElement.scrollTop = scrollTop;
+              hidden.contentWindow.document.body.scrollTop = scrollTop;
+          } catch(e) {}
+
+          visible.classList.add('d-none');
+          hidden.classList.remove('d-none');
+          hidden.onload = null;
+      };
+
+      hidden.src = url;
+  });
+}
 
 setInterval(() => {
-
-    document.querySelectorAll('.accordion-collapse.show iframe')
-        .forEach(frame => {
-            frame.contentWindow.location.reload();
-        });
-
+  document.querySelectorAll('.accordion-collapse.show iframe')
+    .forEach(frame => {
+      try {
+        frame.contentWindow.__gmRefresh?.();
+      } catch(e) {}
+    });
 }, 5000);
 </script>
 
