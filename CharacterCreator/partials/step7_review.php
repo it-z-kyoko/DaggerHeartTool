@@ -1,4 +1,4 @@
-<div class="cc-step-panel" data-step-panel="6">
+<div class="cc-step-panel" data-step-panel="7">
   <div class="cc-block-title">
     <h3>Review</h3>
     <span class="cc-chip"><i class="bi bi-clipboard-check"></i> Final</span>

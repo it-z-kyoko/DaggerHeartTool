@@ -8,7 +8,13 @@
    ============================================================ */
 
 declare(strict_types=1);
-
+session_set_cookie_params([
+  'lifetime' => 0,
+  'path' => '/',          // wichtig
+  'httponly' => true,
+  'samesite' => 'Lax',
+  'secure' => false,      // lokal http
+]);
 session_start();
 
 ini_set('display_errors', '0');
@@ -109,13 +115,14 @@ session_regenerate_id(true);
 
 $_SESSION['userID'] = (int)$row['userID'];
 $_SESSION['auth'] = [
+  'userID' => (int)$row['userID'],   // <-- WICHTIG
   'username' => (string)$row['username'],
   'logged_in_at' => time(),
 ];
 
 jsonResponse(200, [
   'ok' => true,
-  'redirect' => '/dashboard.php',
+  'redirect' => '/Dashboard/index.php',
   'user' => [
     'userID' => (int)$row['userID'],
     'username' => (string)$row['username']
