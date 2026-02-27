@@ -6,11 +6,11 @@
    ============================================================ */
 ?>
 <!doctype html>
-<html lang="de" data-bs-theme="dark">
+<html lang="en" data-bs-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Registrieren</title>
+  <title>Sign Up</title>
 
   <!-- Bootstrap 5.3 -->
   <link
@@ -33,38 +33,38 @@
     <div class="container py-4">
       <div class="col-lg-4 mx-auto text-center mb-5">
         <div class="glass rounded-4 p-4">
-          <h2>Registrieren</h2>
+          <h2>Sign Up</h2>
 
           <form id="registerForm" class="mt-4">
             <div class="mb-3 text-start">
-              <label for="username" class="form-label">Benutzername</label>
+              <label for="username" class="form-label">Username</label>
               <input type="text" class="form-control form-control-lg glass" id="username" name="username"
-                     placeholder="Benutzername" minlength="3" maxlength="32" required>
+                     placeholder="Username" minlength="3" maxlength="32" required>
             </div>
 
             <div class="mb-3 text-start">
-              <label for="password" class="form-label">Passwort</label>
+              <label for="password" class="form-label">Password</label>
               <input type="password" class="form-control form-control-lg glass" id="password" name="password"
-                     placeholder="Passwort" minlength="8" required>
+                     placeholder="Password" minlength="8" required>
               <div class="form-text text-muted">
-                Mindestens 8 Zeichen.
+                At least 8 characters.
               </div>
             </div>
 
             <div class="mb-3 text-start">
-              <label for="password2" class="form-label">Passwort wiederholen</label>
+              <label for="password2" class="form-label">Repeat Password</label>
               <input type="password" class="form-control form-control-lg glass" id="password2" name="password2"
-                     placeholder="Passwort wiederholen" minlength="8" required>
+                     placeholder="Repeat password" minlength="8" required>
             </div>
 
             <div id="registerError" class="alert alert-danger d-none" role="alert"></div>
             <div id="registerOk" class="alert alert-success d-none" role="alert"></div>
 
-            <button type="submit" class="btn btn-brand btn-lg w-100">Account erstellen</button>
+            <button type="submit" class="btn btn-brand btn-lg w-100">Create Account</button>
           </form>
 
           <div class="mt-3 text-center">
-            <a href="signin.php" class="small-link">Bereits einen Account?</a>
+            <a href="signin.php" class="small-link">Already have an account?</a>
           </div>
         </div>
       </div>
@@ -98,7 +98,7 @@
       const password2 = document.getElementById("password2").value;
 
       if (password !== password2) {
-        return showError("Die Passwörter stimmen nicht überein.");
+        return showError("Passwords do not match.");
       }
 
       try {
@@ -111,10 +111,10 @@
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok || !data.ok) {
-          return showError(data.message || "Registrierung fehlgeschlagen.");
+          return showError(data.message || "Registration failed.");
         }
 
-        showOk(data.message || "Account erstellt! Du wirst weitergeleitet…");
+        showOk(data.message || "Account created! Redirecting…");
 
         setTimeout(() => {
           window.location.href = data.redirect || "/Login/signin.php";
@@ -122,7 +122,7 @@
 
       } catch (err) {
         console.error(err);
-        showError("Netzwerkfehler. Bitte erneut versuchen.");
+        showError("Network error. Please try again.");
       }
     });
   </script>

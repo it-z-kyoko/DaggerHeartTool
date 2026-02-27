@@ -6,7 +6,7 @@
    ============================================================ */
 ?>
 <!doctype html>
-<html lang="de" data-bs-theme="dark">
+<html lang="en" data-bs-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,15 +36,15 @@
 
           <form id="loginForm" class="mt-4">
             <div class="mb-3 text-start">
-              <label for="username" class="form-label">Benutzername</label>
+              <label for="username" class="form-label">Username</label>
               <input type="text" class="form-control form-control-lg glass" id="username" name="username"
-                     placeholder="Benutzername" required>
+                     placeholder="Username" required>
             </div>
 
             <div class="mb-3 text-start">
-              <label for="password" class="form-label">Passwort</label>
+              <label for="password" class="form-label">Password</label>
               <input type="password" class="form-control form-control-lg glass" id="password" name="password"
-                     placeholder="Passwort" required>
+                     placeholder="Password" required>
             </div>
 
             <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
@@ -53,7 +53,7 @@
           </form>
 
           <div class="mt-3 text-center">
-            <a href="signup.php" class="small-link">Noch keinen Account? Registrieren</a>
+            <a href="signup.php" class="small-link">No account yet? Sign up</a>
           </div>
         </div>
       </div>
@@ -86,13 +86,13 @@
         const data = await res.json().catch(() => ({}));
 
         if (!res.ok || !data.ok) {
-          return showError(data.message || "Login fehlgeschlagen.");
+          return showError(data.message || "Login failed.");
         }
 
         window.location.href = data.redirect || "/dashboard.php";
       } catch (err) {
         console.error(err);
-        showError("Netzwerkfehler. Bitte erneut versuchen.");
+        showError("Network error. Please try again.");
       }
     });
   </script>

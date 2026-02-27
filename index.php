@@ -10,7 +10,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Daggerheart Nexus – Campaigns & Characters</title>
+  <title>Daggerheart Tool – Campaigns & Characters</title>
 
   <!-- Bootstrap 5.3 -->
   <link
@@ -48,7 +48,7 @@
             Campaign notes, character sheets, and a GM overview — clean, fast, table-ready.
           </h1>
           <p class="lead muted mb-4">
-            Daggerheart Nexus is a lightweight web app for your table:
+            Daggerheart Tool is a lightweight web app for your table:
             keep campaign progress in one place, maintain character sheets, and give the GM a quick overview —
             without clutter, admin noise, or menu overload.
           </p>
@@ -319,7 +319,7 @@
         <div class="row g-4 align-items-center">
           <div class="col-lg-8">
             <div class="kicker mb-2">About</div>
-            <h2 class="fw-bold mb-2">Hi — I’m the developer behind Daggerheart Nexus.</h2>
+            <h2 class="fw-bold mb-2">Hi — I’m the developer behind Daggerheart Tool.</h2>
             <p class="muted mb-3">
               I’m building this tool because I’d rather play than juggle five documents mid-session.
               The goal is an interface that feels like a good table: clear, fast, and frictionless.

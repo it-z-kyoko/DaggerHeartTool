@@ -29,7 +29,7 @@
     <div class="col-12 col-lg-3">
       <div class="cc-field">
         <label for="cHeritage">Heritage</label>
-        <select id="cHeritage">
+        <select class="form-select glass-select"> class="form-select glass-select"> class="form-select glass-select"> id="cHeritage">
           <option value="">Select…</option>
           <?php foreach (($heritages ?? []) as $row): ?>
             <option value="<?php echo (int)$row['heritageID']; ?>"><?php echo h($row['name']); ?></option>
@@ -41,7 +41,7 @@
     <div class="col-12 col-lg-3">
       <div class="cc-field">
         <label for="cClass">Class</label>
-        <select id="cClass">
+        <select class="form-select glass-select"> id="cClass">
           <option value="">Select…</option>
           <?php foreach (($classes ?? []) as $row): ?>
             <option value="<?php echo (int)$row['classID']; ?>"><?php echo h($row['name']); ?></option>
@@ -53,7 +53,7 @@
     <div class="col-12 col-lg-3">
       <div class="cc-field">
         <label for="cSubClass">Subclass</label>
-        <select id="cSubClass">
+        <select class="form-select glass-select"> id="cSubClass">
           <option value="">Select class first…</option>
         </select>
       </div>
@@ -62,7 +62,7 @@
     <div class="col-12 col-lg-3">
       <div class="cc-field">
         <label for="cCommunity">Community</label>
-        <select id="cCommunity">
+        <select class="form-select glass-select"> id="cCommunity">
           <option value="">Select…</option>
           <?php foreach (($communities ?? []) as $row): ?>
             <option value="<?php echo (int)$row['communityID']; ?>"><?php echo h($row['name']); ?></option>

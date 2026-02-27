@@ -17,14 +17,38 @@
           <div class="row g-2 mt-2">
             <div class="col-12">
               <div class="cc-field mb-0">
-                <label>Weapon</label>
-                <select id="w1Select"></select>
+                <label for="w1Select">Weapon</label>
+                <select class="form-select glass-select" id="w1Select"></select>
               </div>
             </div>
-            <div class="col-6"><div class="cc-field mb-0"><label>Trait</label><input id="w1Trait" readonly /></div></div>
-            <div class="col-6"><div class="cc-field mb-0"><label>Range</label><input id="w1Range" readonly /></div></div>
-            <div class="col-6"><div class="cc-field mb-0"><label>Damage</label><input id="w1Dmg" readonly /></div></div>
-            <div class="col-6"><div class="cc-field mb-0"><label>Feature</label><input id="w1Feat" readonly /></div></div>
+
+            <div class="col-6">
+              <div class="cc-field mb-0">
+                <label for="w1Trait">Trait</label>
+                <input class="form-control glass-input" id="w1Trait" readonly />
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="cc-field mb-0">
+                <label for="w1Range">Range</label>
+                <input class="form-control glass-input" id="w1Range" readonly />
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="cc-field mb-0">
+                <label for="w1Dmg">Damage</label>
+                <input class="form-control glass-input" id="w1Dmg" readonly />
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="cc-field mb-0">
+                <label for="w1Feat">Feature</label>
+                <input class="form-control glass-input" id="w1Feat" readonly />
+              </div>
+            </div>
           </div>
 
           <div class="cc-divider"></div>
@@ -33,14 +57,38 @@
           <div class="row g-2 mt-2">
             <div class="col-12">
               <div class="cc-field mb-0">
-                <label>Weapon</label>
-                <select id="w2Select"></select>
+                <label for="w2Select">Weapon</label>
+                <select class="form-select glass-select" id="w2Select"></select>
               </div>
             </div>
-            <div class="col-6"><div class="cc-field mb-0"><label>Trait</label><input id="w2Trait" readonly /></div></div>
-            <div class="col-6"><div class="cc-field mb-0"><label>Range</label><input id="w2Range" readonly /></div></div>
-            <div class="col-6"><div class="cc-field mb-0"><label>Damage</label><input id="w2Dmg" readonly /></div></div>
-            <div class="col-6"><div class="cc-field mb-0"><label>Feature</label><input id="w2Feat" readonly /></div></div>
+
+            <div class="col-6">
+              <div class="cc-field mb-0">
+                <label for="w2Trait">Trait</label>
+                <input class="form-control glass-input" id="w2Trait" readonly />
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="cc-field mb-0">
+                <label for="w2Range">Range</label>
+                <input class="form-control glass-input" id="w2Range" readonly />
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="cc-field mb-0">
+                <label for="w2Dmg">Damage</label>
+                <input class="form-control glass-input" id="w2Dmg" readonly />
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="cc-field mb-0">
+                <label for="w2Feat">Feature</label>
+                <input class="form-control glass-input" id="w2Feat" readonly />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -57,21 +105,24 @@
           <div class="col-12">
             <div class="cc-field mb-0">
               <label for="invName">Name</label>
-              <input id="invName" type="text" placeholder="e.g. Rope" />
+              <input class="form-control glass-input" id="invName" type="text" placeholder="e.g. Rope" />
             </div>
           </div>
+
           <div class="col-8">
             <div class="cc-field mb-0">
               <label for="invDesc">Description</label>
-              <input id="invDesc" type="text" placeholder="e.g. 30ft hemp rope" />
+              <input class="form-control glass-input" id="invDesc" type="text" placeholder="e.g. 30ft hemp rope" />
             </div>
           </div>
+
           <div class="col-4">
             <div class="cc-field mb-0">
               <label for="invAmt">Amount</label>
-              <input id="invAmt" type="number" min="0" value="1" />
+              <input class="form-control glass-input" id="invAmt" type="number" min="0" value="1" />
             </div>
           </div>
+
           <div class="col-12 d-flex justify-content-end">
             <button class="btn btn-outline-light" type="button" id="btnAddInv">
               <i class="bi bi-plus-lg me-2"></i>Add
@@ -92,11 +143,30 @@
           <strong>Gold</strong>
           <span class="cc-muted small">Handfuls / Bags / Chest</span>
         </div>
+
         <div class="row g-3">
-          <div class="col-4"><div class="cc-field mb-0"><label for="gHandfuls">Handfuls</label><input id="gHandfuls" type="number" min="0" value="0" /></div></div>
-          <div class="col-4"><div class="cc-field mb-0"><label for="gBags">Bags</label><input id="gBags" type="number" min="0" value="0" /></div></div>
-          <div class="col-4"><div class="cc-field mb-0"><label for="gChest">Chest</label><input id="gChest" type="number" min="0" value="0" /></div></div>
+          <div class="col-4">
+            <div class="cc-field mb-0">
+              <label for="gHandfuls">Handfuls</label>
+              <input class="form-control glass-input" id="gHandfuls" type="number" min="0" value="0" />
+            </div>
+          </div>
+
+          <div class="col-4">
+            <div class="cc-field mb-0">
+              <label for="gBags">Bags</label>
+              <input class="form-control glass-input" id="gBags" type="number" min="0" value="0" />
+            </div>
+          </div>
+
+          <div class="col-4">
+            <div class="cc-field mb-0">
+              <label for="gChest">Chest</label>
+              <input class="form-control glass-input" id="gChest" type="number" min="0" value="0" />
+            </div>
+          </div>
         </div>
+
       </div>
     </div>
   </div>

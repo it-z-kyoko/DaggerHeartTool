@@ -60,53 +60,6 @@ if ($action === 'getDomainsForClass') {
     }
 }
 
-/*if ($action === 'getDomainCards') {
-    try {
-        $classID = (int)($_GET['classID'] ?? 0);
-        $level   = (int)($_GET['level'] ?? 1);
-        if ($level < 1) $level = 1;
-
-        if ($classID <= 0) json_out(['ok' => true, 'cards' => []]);
-
-        $rows = $db->fetchAll(
-            "SELECT domainID
-             FROM domain_class
-             WHERE classID = :cid
-             ORDER BY domainID",
-            [':cid' => $classID]
-        );
-        $domains = array_values(array_map(fn($r) => (int)$r['domainID'], $rows));
-
-        $dirFs = $root . '/img/Cards/Domains';
-        if (!is_dir($dirFs)) json_out(['ok' => true, 'cards' => []]);
-
-        $cards = [];
-        foreach ($domains as $did) {
-            $pattern = $dirFs . '/' . $did . '_' . $level . '_*.jpg';
-            foreach (glob($pattern) ?: [] as $file) {
-                $base = basename($file); // e.g. 5_1_Something.jpg
-                // parse: DomainID _ SpellLevel _ Name .jpg
-                if (!preg_match('/^(\d+)_([0-9]+)_(.+)\.jpg$/i', $base, $m)) continue;
-
-                $cards[] = [
-                    'filename'  => $base,
-                    'domainID'  => (int)$m[1],
-                    'spellLevel'=> (int)$m[2],
-                    'name'      => (string)$m[3],
-                    'src'       => './img/Cards/Domains/' . $base, // web path
-                ];
-            }
-        }
-
-        // stable sort: domainID, then name
-        usort($cards, fn($a,$b) => [$a['domainID'],$a['name']] <=> [$b['domainID'],$b['name']]);
-
-        json_out(['ok' => true, 'cards' => $cards, 'domains' => $domains, 'level' => $level]);
-    } catch (Throwable $e) {
-        json_out(['ok' => false, 'error' => $e->getMessage()], 500);
-    }
-}*/
-
 if ($action === 'saveDomainCards') {
     try {
         if (empty($_SESSION['creator']['characterID'])) {

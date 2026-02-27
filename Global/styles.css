@@ -504,3 +504,111 @@ select.form-select option {
     background-color: #1c1d24;
     color: #ffffff;
 }
+
+/* ================================
+   GLOBAL DROPDOWN FIX (Dark + Glass)
+   ================================ */
+
+/* Standard Select */
+.form-select {
+  background-color: rgba(25, 25, 35, 0.85) !important;
+  color: #f1f1f1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset;
+  transition: all 0.2s ease;
+}
+
+/* Focus State */
+.form-select:focus {
+  background-color: rgba(30, 30, 45, 0.95) !important;
+  color: #ffffff !important;
+  border-color: #a78bfa !important; /* dein Lila Akzent */
+  box-shadow: 0 0 0 0.25rem rgba(167, 139, 250, 0.25);
+}
+
+/* Disabled */
+.form-select:disabled {
+  background-color: rgba(40, 40, 55, 0.6) !important;
+  color: rgba(255,255,255,0.4) !important;
+}
+
+/* Dropdown Options (Browser-dependent support) */
+.form-select option {
+  background-color: #1b1b26;
+  color: #f1f1f1;
+}
+
+/* Hover für bessere Lesbarkeit */
+.form-select option:hover {
+  background-color: #2a2a3a;
+}
+
+/* Entfernt das weiße native Pfeil-Overlay */
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23a78bfa' viewBox='0 0 16 16'%3E%3Cpath d='M3.204 5h9.592L8 11.481 3.204 5z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px;
+}
+
+/* Small Select */
+.form-select-sm {
+  padding-top: 0.35rem;
+  padding-bottom: 0.35rem;
+}
+
+/* Large Select */
+.form-select-lg {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.glass-select {
+  background: rgba(20, 20, 30, 0.55);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(18px);
+  border-radius: 14px;
+}
+
+/* =========================================
+   FIX: Select Arrow wird mehrfach gekachelt
+   ========================================= */
+
+/* Wichtig: native Select-Arrows killen */
+.form-select {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+
+  /* dein Dark/Glass Background */
+  background-color: rgba(25, 25, 35, 0.85) !important;
+  color: #f1f1f1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  /* GENAU EIN Pfeil, kein Kacheln */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23a78bfa' viewBox='0 0 16 16'%3E%3Cpath d='M3.204 5h9.592L8 11.481 3.204 5z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 0.9rem center !important;
+  background-size: 14px 14px !important;
+
+  /* Platz für den Pfeil */
+  padding-right: 2.75rem !important;
+
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.05) inset;
+}
+
+/* Focus */
+.form-select:focus {
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 0 0.25rem rgba(167, 139, 250, 0.25) !important;
+}
+
+/* Dropdown Options (Browser abhängig, aber hilft oft) */
+.form-select option {
+  background-color: #1b1b26;
+  color: #f1f1f1;
+}
