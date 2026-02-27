@@ -299,7 +299,6 @@ $flash = flash_get();
                         ?>
                             <a class="char-card" href="<?= htmlspecialchars($href, ENT_QUOTES, 'UTF-8') ?>"
                                <?= (!$isOwner && $memberCharId <= 0) ? 'onclick="return false;" style="opacity:.65;cursor:not-allowed;"' : '' ?>>
-                                <img class="char-avatar" src="img/char-placeholder.jpg" alt="Campaign image" />
                                 <div class="flex-grow-1">
                                     <p class="char-name mb-1"><?= htmlspecialchars($name, ENT_QUOTES, 'UTF-8') ?></p>
                                     <p class="char-meta mb-0">

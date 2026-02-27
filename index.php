@@ -7,6 +7,7 @@
 
 <!doctype html>
 <html lang="en" data-bs-theme="dark">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -17,13 +18,11 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     rel="stylesheet"
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-    crossorigin="anonymous"
-  />
+    crossorigin="anonymous" />
   <!-- Icons -->
   <link
     rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-  />
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="Global/styles.css" />
 </head>
 
@@ -45,7 +44,7 @@
 
           <div class="kicker mb-2">Built for Daggerheart groups</div>
           <h1 class="display-4 fw-bold hero-title mb-3">
-            Campaign notes, character sheets, and a GM overview — clean, fast, table-ready.
+            Character, Campaigns, GM overview - clean, fast, table-ready
           </h1>
           <p class="lead muted mb-4">
             Daggerheart Tool is a lightweight web app for your table:
@@ -57,8 +56,8 @@
             <a class="btn btn-brand btn-lg" href="Login/signup.php">
               Get started for free <i class="bi bi-arrow-right ms-2"></i>
             </a>
-            <a class="btn btn-ghost btn-lg" href="CharacterSheet/sheet.html">
-              <i class="bi bi-person-plus me-2"></i> Create a character
+            <a class="btn btn-ghost btn-lg" href="/Dashboard/index.php">
+              <i class="bi bi-bookmark me-2"></i> User Dashboard
             </a>
           </div>
 
@@ -93,7 +92,7 @@
         </div>
         <div class="d-flex align-items-center gap-2">
           <i class="bi bi-shield-check"></i>
-          <span class="muted">Concept: private GM notes vs. player-visible info</span>
+          <span class="muted">Easy GM overview</span>
         </div>
       </div>
     </div>
@@ -114,12 +113,12 @@
             <div class="d-flex align-items-start gap-3">
               <span class="icon-pill"><i class="bi bi-journal-bookmark"></i></span>
               <div>
-                <h5 class="mb-1">Track campaigns</h5>
+                <h5 class="mb-1">Track campaigns (TO BE ADDED!!!)</h5>
                 <p class="muted mb-3">
                   Session summaries, decisions, NPCs, locations, and open threads — so you can jump back in instantly.
                 </p>
                 <ul class="muted small mb-0">
-                  <li>Sessions: date, summary, notes</li>
+                  <li>Sessions: date, summary, notes (to be added)</li>
                   <li>Tags for plotlines, factions, locations</li>
                   <li>Open threads as a quick list</li>
                 </ul>
@@ -259,7 +258,7 @@
             <div class="accordion-item mb-2">
               <h2 class="accordion-header" id="q1">
                 <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#a1"
-                        aria-expanded="false" aria-controls="a1">
+                  aria-expanded="false" aria-controls="a1">
                   Is this a VTT like Roll20?
                 </button>
               </h2>
@@ -273,13 +272,13 @@
             <div class="accordion-item mb-2">
               <h2 class="accordion-header" id="q2">
                 <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#a2"
-                        aria-expanded="false" aria-controls="a2">
+                  aria-expanded="false" aria-controls="a2">
                   Can GM notes stay private?
                 </button>
               </h2>
               <div id="a2" class="accordion-collapse collapse" aria-labelledby="q2" data-bs-parent="#faqAcc">
                 <div class="accordion-body rounded-bottom-4">
-                  Yes. Private GM notes vs. player-visible info is a core concept.
+                  Yes this will be added later. Private GM notes vs. player-visible info is a core concept.
                 </div>
               </div>
             </div>
@@ -287,7 +286,7 @@
             <div class="accordion-item mb-2">
               <h2 class="accordion-header" id="q3">
                 <button class="accordion-button collapsed rounded-4" type="button" data-bs-toggle="collapse" data-bs-target="#a3"
-                        aria-expanded="false" aria-controls="a3">
+                  aria-expanded="false" aria-controls="a3">
                   Do I need a lot of setup?
                 </button>
               </h2>
@@ -319,34 +318,28 @@
         <div class="row g-4 align-items-center">
           <div class="col-lg-8">
             <div class="kicker mb-2">About</div>
-            <h2 class="fw-bold mb-2">Hi — I’m the developer behind Daggerheart Tool.</h2>
+            <h2 class="fw-bold mb-2">Hi — I’m Kyo, the developer behind Daggerheart Tool.</h2>
             <p class="muted mb-3">
               I’m building this tool because I’d rather play than juggle five documents mid-session.
-              The goal is an interface that feels like a good table: clear, fast, and frictionless.
+              The goal is an interface that feels good while playing and makes things much easier
             </p>
-            <div class="d-flex flex-wrap gap-2">
-              <span class="badge text-bg-secondary"><i class="bi bi-code-slash me-1"></i> Web Dev</span>
-              <span class="badge text-bg-secondary"><i class="bi bi-dice-5 me-1"></i> TTRPGs</span>
-              <span class="badge text-bg-secondary"><i class="bi bi-lightning-charge me-1"></i> UX focus</span>
-            </div>
           </div>
 
-          <div class="col-lg-4">
-            <div class="glass rounded-4 p-4">
-              <div class="fw-semibold mb-2">Contact / Links</div>
-              <div class="muted small mb-3">
-                Replace these buttons with your real links (GitHub, Discord, website).
-              </div>
-              <div class="d-grid gap-2">
-                <a class="btn btn-ghost" href="contact.html"><i class="bi bi-envelope me-2"></i>Contact</a>
-                <a class="btn btn-ghost" href="#"><i class="bi bi-github me-2"></i>GitHub</a>
-                <a class="btn btn-ghost" href="#"><i class="bi bi-discord me-2"></i>Discord</a>
-              </div>
-            </div>
-          </div>
+        
 
+      <div class="col-lg-4">
+        <img src="/img/PXL_20260224_091448696.MP.jpg" alt="" style="width: 100%;">
+        <div class="d-flex flex-wrap gap-2 p-2">
+          <span class="badge text-bg-secondary"><i class="bi bi-code-slash me-1"></i> Web Dev</span>
+          <span class="badge text-bg-secondary"><i class="bi bi-dice-5 me-1"></i> TTRPGs</span>
+          <span class="badge text-bg-secondary"><i class="bi bi-lightning-charge me-1"></i> UX focus</span>
+        </div>
         </div>
       </div>
+      </div>
+
+    </div>
+    </div>
     </div>
   </section>
 
@@ -356,7 +349,7 @@
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"
-  ></script>
+    crossorigin="anonymous"></script>
 </body>
+
 </html>

@@ -148,7 +148,7 @@ if ($action === 'saveDomainCards') {
   <header class="py-4">
     <div class="container">
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-        <a class="btn btn-outline-light" href="/dashboard.php">
+        <a class="btn btn-outline-light" href="/Dashboard/index.php">
           <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
         </a>
 
