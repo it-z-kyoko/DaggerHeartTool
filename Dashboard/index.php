@@ -356,7 +356,7 @@ $flash = flash_get();
 
           <div class="mb-2">
             <label class="form-label">Select Character</label>
-            <select class="form-select glass-select"> name="characterID" class="form-select" required>
+            <select class="form-select glass-select" name="characterID" class="form-select" required>
               <option value="" selected disabled>Please choose…</option>
               <?php foreach ($myCharactersForJoin as $row): ?>
                 <option value="<?= (int)$row['characterID'] ?>">

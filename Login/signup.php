@@ -1,9 +1,5 @@
 <?php
-/* ============================================================
-   FILE 1: /Login/signup.php  (PAGE ONLY)
-   - Shows Bootstrap register UI
-   - Sends credentials to /Login/api_register.php via fetch()
-   ============================================================ */
+/* /Login/signup.php */
 ?>
 <!doctype html>
 <html lang="en" data-bs-theme="dark">
@@ -64,7 +60,7 @@
           </form>
 
           <div class="mt-3 text-center">
-            <a href="signin.php" class="small-link">Already have an account?</a>
+            <a href="login.php" class="small-link">Already have an account?</a>
           </div>
         </div>
       </div>
@@ -97,9 +93,7 @@
       const password = document.getElementById("password").value;
       const password2 = document.getElementById("password2").value;
 
-      if (password !== password2) {
-        return showError("Passwords do not match.");
-      }
+      if (password !== password2) return showError("Passwords do not match.");
 
       try {
         const res = await fetch("/Login/api_register.php", {
@@ -115,10 +109,9 @@
         }
 
         showOk(data.message || "Account created! Redirecting…");
-
         setTimeout(() => {
-          window.location.href = data.redirect || "/Login/signin.php";
-        }, 800);
+          window.location.href = data.redirect || "/Dashboard/index.php";
+        }, 600);
 
       } catch (err) {
         console.error(err);

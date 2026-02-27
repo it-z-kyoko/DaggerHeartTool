@@ -36,7 +36,7 @@
 
         <div class="cc-field">
           <label for="aName">Active Armor</label>
-          <select class="form-select glass-select"> id="aName">
+          <select class="form-select glass-select" id="aName">
             <option value="">Select…</option>
           </select>
           <div class="cc-muted small mt-1" id="armorLevelHint"></div>

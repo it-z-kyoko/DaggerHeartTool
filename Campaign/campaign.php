@@ -7,7 +7,7 @@ session_start();
 $root = dirname(__DIR__);
 
 if (!isset($_SESSION['userID'])) {
-  header('Location: ' . $root . '/Login/login.php');
+  header('Location: /Login/login.php');
   exit;
 }
 ?>
@@ -32,18 +32,14 @@ if (!isset($_SESSION['userID'])) {
       box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
     }
 
-    .muted {
-      opacity: .85;
-    }
+    .muted { opacity: .85; }
 
     .code-pill {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       letter-spacing: .06em;
     }
 
-    tr.row-link {
-      cursor: pointer;
-    }
+    tr.row-link { cursor: pointer; }
 
     tr.row-link:hover td {
       background: rgba(255, 255, 255, .03);
@@ -69,10 +65,10 @@ if (!isset($_SESSION['userID'])) {
         <div class="text-secondary">Owner → GM Live. Member → Character Sheet of the assigned character.</div>
       </div>
       <div class="d-flex gap-2">
-        <button class="btn btn-outline-light" id="btnReload">
+        <button class="btn btn-outline-light" id="btnReload" type="button">
           <i class="bi bi-arrow-repeat"></i>
         </button>
-        <button class="btn btn-primary" id="btnNew">
+        <button class="btn btn-primary" id="btnNew" type="button">
           <i class="bi bi-plus-lg"></i> New Campaign
         </button>
       </div>
@@ -122,8 +118,8 @@ if (!isset($_SESSION['userID'])) {
           <div class="alert alert-danger d-none" id="errBox"></div>
         </div>
         <div class="modal-footer border-0">
-          <button class="btn btn-outline-light" data-bs-dismiss="modal">Cancel</button>
-          <button class="btn btn-primary" id="btnSave"><i class="bi bi-check2"></i> Save</button>
+          <button class="btn btn-outline-light" data-bs-dismiss="modal" type="button">Cancel</button>
+          <button class="btn btn-primary" id="btnSave" type="button"><i class="bi bi-check2"></i> Save</button>
         </div>
       </div>
     </div>
@@ -159,11 +155,16 @@ if (!isset($_SESSION['userID'])) {
           <div class="alert alert-danger d-none mt-3" id="shareErr"></div>
         </div>
         <div class="modal-footer border-0">
-          <button class="btn btn-outline-light" data-bs-dismiss="modal">Close</button>
+          <button class="btn btn-outline-light" data-bs-dismiss="modal" type="button">Close</button>
         </div>
       </div>
     </div>
   </div>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
 
   <script>
     (() => {
@@ -173,9 +174,7 @@ if (!isset($_SESSION['userID'])) {
       const btnReload = document.getElementById('btnReload');
       const btnNew = document.getElementById('btnNew');
 
-      const modalEl = document.getElementById('modalCampaign');
-      const modal = new bootstrap.Modal(modalEl);
-
+      const modal = new bootstrap.Modal(document.getElementById('modalCampaign'));
       const modalTitle = document.getElementById('modalTitle');
       const inpID = document.getElementById('campaignID');
       const inpName = document.getElementById('name');
@@ -184,8 +183,7 @@ if (!isset($_SESSION['userID'])) {
       const errBox = document.getElementById('errBox');
       const btnSave = document.getElementById('btnSave');
 
-      const shareEl = document.getElementById('modalShare');
-      const shareModal = new bootstrap.Modal(shareEl);
+      const shareModal = new bootstrap.Modal(document.getElementById('modalShare'));
       const shareCampaignID = document.getElementById('shareCampaignID');
       const shareCode = document.getElementById('shareCode');
       const btnCopyCode = document.getElementById('btnCopyCode');
@@ -200,17 +198,14 @@ if (!isset($_SESSION['userID'])) {
         errBox.textContent = msg || 'Unknown error';
         errBox.classList.remove('d-none');
       }
-
       function clearError() {
         errBox.classList.add('d-none');
         errBox.textContent = '';
       }
-
       function showShareError(msg) {
         shareErr.textContent = msg || 'Unknown error';
         shareErr.classList.remove('d-none');
       }
-
       function clearShareError() {
         shareErr.classList.add('d-none');
         shareErr.textContent = '';
@@ -266,9 +261,9 @@ if (!isset($_SESSION['userID'])) {
 
           const code = esc(r.code || '');
 
-          const badge = isOwner ?
-            `<span class="badge text-bg-primary ms-2">Owner</span>` :
-            `<span class="badge text-bg-secondary ms-2">Member</span>`;
+          const badge = isOwner
+            ? `<span class="badge text-bg-primary ms-2">Owner</span>`
+            : `<span class="badge text-bg-secondary ms-2">Member</span>`;
 
           let charCell = `<span class="muted">–</span>`;
           if (memberCharId > 0) {
@@ -282,49 +277,70 @@ if (!isset($_SESSION['userID'])) {
 
           if (isOwner) {
             actions += `
-              <button class="btn btn-sm btn-outline-light me-1" data-act="share" data-id="${r.campaignID}" data-code="${code}" title="Share (Code)">
+              <button class="btn btn-sm btn-outline-light me-1"
+                      data-act="share"
+                      data-id="${r.campaignID}"
+                      data-code="${code}"
+                      type="button"
+                      title="Share (Code)">
                 <i class="bi bi-share"></i>
               </button>
-              <button class="btn btn-sm btn-success me-1" data-act="live" data-id="${r.campaignID}" title="Open GM Live">
+
+              <a class="btn btn-sm btn-success me-1"
+                 href="./gm_live.php?campaignID=${encodeURIComponent(r.campaignID)}"
+                 title="Open GM Live">
                 <i class="bi bi-play-fill"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-light me-1" data-act="edit" data-id="${r.campaignID}" title="Edit">
+              </a>
+
+              <button class="btn btn-sm btn-outline-light me-1"
+                      data-act="edit"
+                      data-id="${r.campaignID}"
+                      type="button"
+                      title="Edit">
                 <i class="bi bi-pencil"></i>
               </button>
-              <button class="btn btn-sm btn-outline-danger me-1" data-act="del" data-id="${r.campaignID}" title="Delete">
+
+              <button class="btn btn-sm btn-outline-danger me-1"
+                      data-act="del"
+                      data-id="${r.campaignID}"
+                      type="button"
+                      title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
             `;
           } else {
-            actions += (memberCharId > 0) ?
-              `<a class="btn btn-sm btn-primary me-1" href="/CharacterSheet/character_view.php?characterID=${encodeURIComponent(memberCharId)}" title="Open Character Sheet">
-                <i class="bi bi-person-lines-fill me-1"></i>Sheet
-              </a>` :
-              `<button class="btn btn-sm btn-outline-secondary me-1" disabled title="No character assigned">
-                <i class="bi bi-person-lines-fill me-1"></i>Sheet
-              </button>`;
+            actions += (memberCharId > 0)
+              ? `<a class="btn btn-sm btn-primary me-1"
+                    href="/CharacterSheet/character_view.php?characterID=${encodeURIComponent(memberCharId)}"
+                    title="Open Character Sheet">
+                  <i class="bi bi-person-lines-fill me-1"></i>Sheet
+                </a>`
+              : `<button class="btn btn-sm btn-outline-secondary me-1" disabled type="button" title="No character assigned">
+                  <i class="bi bi-person-lines-fill me-1"></i>Sheet
+                </button>`;
 
             actions += `
-              <button class="btn btn-sm btn-outline-warning" data-act="leave" data-id="${r.campaignID}" title="Leave Campaign">
+              <button class="btn btn-sm btn-outline-warning"
+                      data-act="leave"
+                      data-id="${r.campaignID}"
+                      type="button"
+                      title="Leave Campaign">
                 <i class="bi bi-box-arrow-right"></i>
               </button>
             `;
           }
 
-          const rowTarget = isOwner ?
-            ('./gm_live.php?campaignID=' + encodeURIComponent(r.campaignID)) :
-            (memberCharId > 0 ?
-              ('/CharacterSheet/character_view.php?characterID=' + encodeURIComponent(memberCharId)) :
-              ''
-            );
+          const rowTarget = isOwner
+            ? ('./gm_live.php?campaignID=' + encodeURIComponent(r.campaignID))
+            : (memberCharId > 0
+              ? ('/CharacterSheet/character_view.php?characterID=' + encodeURIComponent(memberCharId))
+              : '');
 
           return `
             <tr class="row-link"
                 data-row="${r.campaignID}"
                 data-name="${esc(r.name)}"
                 data-desc="${esc(r.description || '')}"
-                data-isowner="${isOwner ? 1 : 0}"
-                data-memberchar="${memberCharId}"
                 data-rowtarget="${esc(rowTarget)}">
               <td class="fw-semibold">${name}${badge}</td>
               <td class="text-secondary">${desc ? desc : '<span class="muted">–</span>'}</td>
@@ -361,12 +377,30 @@ if (!isset($_SESSION['userID'])) {
       function openEdit(tr) {
         clearError();
         modalTitle.textContent = 'Edit Campaign';
-        inpID.value = tr.getAttribute('data-row');
+        inpID.value = tr.getAttribute('data-row') || '';
         inpName.value = tr.getAttribute('data-name') || '';
         inpDesc.value = tr.getAttribute('data-desc') || '';
         descCount.textContent = String(inpDesc.value.length);
         modal.show();
         setTimeout(() => inpName.focus(), 150);
+      }
+
+      async function openShare(campaignID, existingCode = '') {
+        clearShareError();
+        shareCampaignID.value = String(campaignID);
+        shareCode.value = existingCode || '...';
+        shareModal.show();
+
+        // Wenn bereits Code vorhanden, sofort anzeigen und nicht zwingend API callen
+        if (existingCode) return;
+
+        const res = await call('share_code', { campaignID: String(campaignID), force: '0' });
+        if (!res.ok) {
+          showShareError(res.error || 'Could not load code');
+          shareCode.value = '';
+          return;
+        }
+        shareCode.value = res.code || '';
       }
 
       btnNew.addEventListener('click', openCreate);
@@ -386,9 +420,9 @@ if (!isset($_SESSION['userID'])) {
 
         btnSave.disabled = true;
 
-        const res = campaignID ?
-          await call('update', { campaignID, name, description }) :
-          await call('create', { name, description });
+        const res = campaignID
+          ? await call('update', { campaignID, name, description })
+          : await call('create', { name, description });
 
         btnSave.disabled = false;
 
@@ -401,26 +435,86 @@ if (!isset($_SESSION['userID'])) {
         await load();
       });
 
+      btnCopyCode.addEventListener('click', async () => {
+        clearShareError();
+        const val = shareCode.value.trim();
+        if (!val) return;
+
+        try {
+          await navigator.clipboard.writeText(val);
+          btnCopyCode.innerHTML = '<i class="bi bi-check2"></i>';
+          setTimeout(() => (btnCopyCode.innerHTML = '<i class="bi bi-clipboard"></i>'), 900);
+        } catch (e) {
+          showShareError('Copy failed (browser blocked clipboard).');
+        }
+      });
+
+      btnRegenerate.addEventListener('click', async () => {
+        clearShareError();
+        const cid = Number(shareCampaignID.value || '0') || 0;
+        if (!cid) return;
+
+        btnRegenerate.disabled = true;
+        const res = await call('share_code', { campaignID: String(cid), force: '1' });
+        btnRegenerate.disabled = false;
+
+        if (!res.ok) {
+          showShareError(res.error || 'Could not regenerate code');
+          return;
+        }
+        shareCode.value = res.code || '';
+      });
+
+      // Buttons + Row click
       tblBody.addEventListener('click', async (ev) => {
         const btn = ev.target.closest('button[data-act]');
-        if (!btn) return;
+        if (btn) {
+          ev.preventDefault();
+          ev.stopPropagation();
 
-        const act = btn.getAttribute('data-act');
-        const id = btn.getAttribute('data-id');
+          const act = btn.getAttribute('data-act');
+          const id = btn.getAttribute('data-id');
 
-        if (act === 'del') {
-          if (!confirm('Delete campaign permanently? (All assignments will be removed)')) return;
-          const res = await call('delete', { campaignID: id });
-          if (!res.ok) return alert(res.error || 'Delete failed');
-          await load();
+          if (act === 'share') {
+            const existingCode = btn.getAttribute('data-code') || '';
+            await openShare(id, existingCode);
+            return;
+          }
+
+          if (act === 'edit') {
+            const tr = btn.closest('tr');
+            if (tr) openEdit(tr);
+            return;
+          }
+
+          if (act === 'del') {
+            if (!confirm('Delete campaign permanently? (All assignments will be removed)')) return;
+            const res = await call('delete', { campaignID: id });
+            if (!res.ok) return alert(res.error || 'Delete failed');
+            await load();
+            return;
+          }
+
+          if (act === 'leave') {
+            if (!confirm('Leave campaign? (Your character assignment will be removed)')) return;
+            const res = await call('leave', { campaignID: id });
+            if (!res.ok) return alert(res.error || 'Leaving failed');
+            await load();
+            return;
+          }
+
+          return;
         }
 
-        if (act === 'leave') {
-          if (!confirm('Leave campaign? (Your character assignment will be removed)')) return;
-          const res = await call('leave', { campaignID: id });
-          if (!res.ok) return alert(res.error || 'Leaving failed');
-          await load();
-        }
+        // normale Links in Row sollen normal funktionieren
+        if (ev.target.closest('a')) return;
+
+        // Row click navigation
+        const tr = ev.target.closest('tr.row-link');
+        if (!tr) return;
+
+        const target = tr.getAttribute('data-rowtarget') || '';
+        if (target) window.location.href = target;
       });
 
       load();

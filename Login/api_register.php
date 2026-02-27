@@ -4,11 +4,19 @@ declare(strict_types=1);
 session_start();
 
 /**
- * DEV DEBUG (remove later):
- * Shows errors as JSON and logs them.
+ * api_register.php
+ * - Expects JSON: { username, password }
+ * - Creates user in SQLite
+ * - Sets $_SESSION['userID'] (compatible with the rest of your app)
+ *
+ * Debug:
+ *   /Login/api_register.php?debug=1
  */
-ini_set('display_errors', '0');
+
 error_reporting(E_ALL);
+ini_set('display_errors', '0');
+
+$debug = (int)($_GET['debug'] ?? 0) === 1;
 
 function jsonResponse(int $status, array $payload): never {
   http_response_code($status);
@@ -28,11 +36,11 @@ function readRequestData(): array {
   return $_POST ?? [];
 }
 
-set_exception_handler(function(Throwable $e) {
+set_exception_handler(function(Throwable $e) use ($debug) {
   error_log("[api_register] " . $e->getMessage() . "\n" . $e->getTraceAsString());
   jsonResponse(500, [
     'ok' => false,
-    'message' => 'Serverfehler: ' . $e->getMessage(), // DEV: shows the real reason
+    'message' => $debug ? ('Serverfehler: ' . $e->getMessage()) : 'Serverfehler.',
   ]);
 });
 
@@ -42,30 +50,28 @@ if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
 
 require_once __DIR__ . '/../Database/Database.php';
 
-/**
- * IMPORTANT:
- * Your Database class throws if the DB file does not exist.
- * So ensure the path is correct AND the file exists.
- */
 $dbFile = __DIR__ . '/../Database/Daggerheart.db';
-
-// Helpful: return path in error if missing
 if (!file_exists($dbFile)) {
   jsonResponse(500, [
     'ok' => false,
-    'message' => 'DB-Datei nicht gefunden unter: ' . $dbFile,
+    'message' => $debug ? ('DB-Datei nicht gefunden: ' . $dbFile) : 'DB nicht gefunden.',
   ]);
 }
 
 $db = Database::getInstance($dbFile);
 
-// If you want to auto-create the user table (fine for dev):
-$db->execute("
-  CREATE TABLE IF NOT EXISTS user (
-    username TEXT PRIMARY KEY,
-    password TEXT NOT NULL
+// Recommended for SQLite
+$db->execute("PRAGMA foreign_keys = ON;");
+
+// --- Ensure expected table exists (compatible with your project schema) ---
+$db->execute('
+  CREATE TABLE IF NOT EXISTS "user" (
+    userID   INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT    NOT NULL UNIQUE,
+    password TEXT    NOT NULL,
+    picture  TEXT
   );
-");
+');
 
 $data = readRequestData();
 $username = isset($data['username']) ? trim((string)$data['username']) : '';
@@ -85,8 +91,9 @@ if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $username)) {
   jsonResponse(400, ['ok' => false, 'message' => 'Benutzername darf nur Buchstaben, Zahlen und _ . - enthalten.']);
 }
 
+// Check existing
 $existing = $db->fetch(
-  "SELECT username FROM user WHERE username = :u LIMIT 1",
+  'SELECT userID, username FROM "user" WHERE username = :u LIMIT 1',
   [':u' => $username]
 );
 if ($existing) {
@@ -98,17 +105,38 @@ if ($hash === false) {
   jsonResponse(500, ['ok' => false, 'message' => 'Serverfehler beim Passwort-Hash.']);
 }
 
+// Insert
 $db->execute(
-  "INSERT INTO user (username, password) VALUES (:u, :p)",
+  'INSERT INTO "user" (username, password) VALUES (:u, :p)',
   [':u' => $username, ':p' => $hash]
 );
 
-// Optional: auto-login
+// Get created userID safely
+$row = $db->fetch(
+  'SELECT userID, username FROM "user" WHERE username = :u LIMIT 1',
+  [':u' => $username]
+);
+
+if (!$row || !isset($row['userID'])) {
+  jsonResponse(500, ['ok' => false, 'message' => $debug ? 'User insert ok, but cannot read userID.' : 'Serverfehler.']);
+}
+
+$userID = (int)$row['userID'];
+
+// Auto-login (compatible with the rest of your app)
 session_regenerate_id(true);
-$_SESSION['auth'] = ['username' => $username, 'logged_in_at' => time()];
+$_SESSION['userID'] = $userID;
+
+// optional: keep your auth array too (harmless)
+$_SESSION['auth'] = [
+  'userID' => $userID,
+  'username' => $username,
+  'logged_in_at' => time()
+];
 
 jsonResponse(200, [
   'ok' => true,
   'message' => 'Account erstellt!',
-  'redirect' => '/dashboard.php'
+  // adjust to your real dashboard path if needed:
+  'redirect' => '/Dashboard/dashboard.php'
 ]);

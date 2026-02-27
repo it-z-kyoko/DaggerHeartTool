@@ -1,4 +1,4 @@
-(() => {
+window.addEventListener('DOMContentLoaded', () => {
   // --------------------
   // Theme toggle
   // --------------------
@@ -82,11 +82,77 @@
   // --------------------
   // ✅ BASE PATHS (FIX)
   // --------------------
-  // API relativ zur aktuellen Seite (/CharacterCreator/creator.php -> ./api/...)
   const API = './api';
-
-  // Images liegen im Projekt-Root (/img/...), von /CharacterCreator/ aus -> ../img/...
   const IMG_BASE = '../img';
+
+  // --------------------
+  // ✅ CACHE / IMAGE HARDENING
+  // --------------------
+  // WICHTIG: feste Version nach Deploy hochzählen -> bricht zuverlässig Bildcache
+  const ASSET_VERSION = '2026-02-27-01';
+
+  function withBust(url) {
+    // akzeptiert relative/absolute URLs, baut immer eine absolute URL
+    const u = new URL(url, window.location.href);
+    // wenn serverseitig schon ?v=... dran hängt, überschreiben wir bewusst
+    u.searchParams.set('v', ASSET_VERSION);
+    return u.toString();
+  }
+
+  async function fetchNoStore(url, opts = {}) {
+    // erzwingt: keine Fetch-Caches, keine Zwischen-Caches
+    const res = await fetch(url, {
+      ...opts,
+      cache: 'no-store',
+      credentials: opts.credentials ?? 'same-origin',
+      headers: {
+        'Accept': 'application/json',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        ...(opts.headers || {})
+      }
+    });
+    return res;
+  }
+
+  function setImgRobust(imgEl, rawUrl, debugLabel = '') {
+    if (!imgEl) return;
+
+    const finalUrl = withBust(rawUrl);
+
+    imgEl.loading = 'eager';
+    imgEl.decoding = 'async';
+    imgEl.referrerPolicy = 'no-referrer';
+
+    // Reset previous handlers (wichtig bei re-render)
+    imgEl.onerror = null;
+    imgEl.onload = null;
+
+    let tried = 0;
+
+    const apply = () => {
+      tried++;
+      imgEl.src = finalUrl + (tried > 1 ? `&retry=${tried}` : '');
+
+      imgEl.onerror = () => {
+        // 1x retry mit neuem Cache-buster (manche Clients haben komisches Zwischen-Caching)
+        if (tried < 2) {
+          setTimeout(apply, 150);
+          return;
+        }
+        console.error('[IMG FAIL]', debugLabel || '', imgEl.src);
+        imgEl.style.opacity = '0.25';
+        imgEl.title = `FAILED: ${imgEl.src}`;
+      };
+
+      imgEl.onload = () => {
+        imgEl.style.opacity = '1';
+        imgEl.title = '';
+      };
+    };
+
+    apply();
+  }
 
   function updateFixedCards() {
     const herOpt = document.querySelector('#cHeritage option:checked');
@@ -98,10 +164,11 @@
     if (cardAncestry && cardAncestryHint) {
       if (herOpt && herOpt.value) {
         const f = toFileNameFromLabel(herOpt.textContent);
-        cardAncestry.src = `${IMG_BASE}/Cards/Ancestries/${f}.jpg`;
+        const path = `${IMG_BASE}/Cards/Ancestries/${f}.jpg`;
+        setImgRobust(cardAncestry, path, `Ancestry:${f}`);
         cardAncestryHint.textContent = `${herOpt.textContent.trim()}.jpg`;
       } else {
-        cardAncestry.src = '';
+        cardAncestry.removeAttribute('src');
         cardAncestryHint.textContent = 'Select Heritage first.';
       }
     }
@@ -110,10 +177,11 @@
     if (cardClass && cardClassHint) {
       if (classID > 0 && subID > 0) {
         const f = `${classID}_${subID}_Foundation.jpg`;
-        cardClass.src = `${IMG_BASE}/Cards/Classes/${f}`;
+        const path = `${IMG_BASE}/Cards/Classes/${f}`;
+        setImgRobust(cardClass, path, `ClassFoundation:${f}`);
         cardClassHint.textContent = f;
       } else {
-        cardClass.src = '';
+        cardClass.removeAttribute('src');
         cardClassHint.textContent = 'Select Class + Subclass first.';
       }
     }
@@ -122,10 +190,11 @@
     if (cardCommunity && cardCommunityHint) {
       if (comOpt && comOpt.value) {
         const f = toFileNameFromLabel(comOpt.textContent);
-        cardCommunity.src = `${IMG_BASE}/Cards/Communities/${f}.jpg`;
+        const path = `${IMG_BASE}/Cards/Communities/${f}.jpg`;
+        setImgRobust(cardCommunity, path, `Community:${f}`);
         cardCommunityHint.textContent = `${comOpt.textContent.trim()}.jpg`;
       } else {
-        cardCommunity.src = '';
+        cardCommunity.removeAttribute('src');
         cardCommunityHint.textContent = 'Select Community first.';
       }
     }
@@ -164,12 +233,16 @@
       wrap.style.position = 'relative';
 
       const img = document.createElement('img');
-      img.src = c.src;
+
+      // ✅ robust image set + cache bust
+      // Wichtig: c.src sollte relativ/absolut sein -> wir normalisieren über withBust()
+      setImgRobust(img, c.src, `Domain:${c.filename}`);
+
       img.alt = c.filename;
       img.style.width = '100%';
       img.style.borderRadius = '.75rem';
       img.style.display = 'block';
-      img.loading = 'lazy';
+      img.loading = 'eager';
 
       const badge = document.createElement('div');
       badge.style.position = 'absolute';
@@ -226,21 +299,37 @@
     domainHint.textContent = 'Loading Domain cards…';
 
     try {
-      const res = await fetch(`${API}/get_domain_cards.php?classID=${encodeURIComponent(classID)}&level=${encodeURIComponent(lvl)}`, {
-        headers: { 'Accept': 'application/json' }
-      });
+      const url = `${API}/get_domain_cards.php?classID=${encodeURIComponent(classID)}&level=${encodeURIComponent(lvl)}&v=${encodeURIComponent(ASSET_VERSION)}`;
 
-      const json = await res.json();
+      const res = await fetchNoStore(url);
 
-      if (!json.ok) {
+      let json = null;
+      try { json = await res.json(); } catch { json = null; }
+
+      if (!res.ok || !json || !json.ok) {
+        console.error('get_domain_cards error:', res.status, json);
         domainHint.textContent = 'Failed to load Domain cards.';
         domainCards = [];
         renderDomainGrid();
         return;
       }
 
-      domainCards = json.cards || [];
+      domainCards = Array.isArray(json.cards) ? json.cards : [];
       domainHint.textContent = `Showing Domain cards for Level ${json.level}. Domains: ${(json.domains || []).join(', ') || '—'}`;
+
+      // ✅ Normalize src (wichtig wenn API nur "img/.." ohne ../ liefert)
+      domainCards = domainCards.map(c => {
+        const src = (c.src || '').toString();
+
+        // Wenn API "img/..." liefert -> erzwinge korrektes Root: ../img/...
+        // Wenn API bereits "../img/..." oder "http..." liefert, lassen wir es.
+        let fixed = src;
+        if (fixed && !fixed.startsWith('http') && !fixed.startsWith('../') && !fixed.startsWith('/')) {
+          fixed = './' + fixed; // relative zur aktuellen Seite
+        }
+
+        return { ...c, src: fixed };
+      });
 
       // drop selections that no longer exist
       selectedDomainFiles = selectedDomainFiles.filter(f => domainCards.some(c => c.filename === f));
@@ -326,33 +415,58 @@
   async function loadSubclasses(classID) {
     if (!cSubClass) return;
 
+    const cid = parseInt(classID || '0', 10) || 0;
+
     cSubClass.innerHTML = '';
-    if (!classID) {
-      const opt = document.createElement('option');
-      opt.value = '';
-      opt.textContent = 'Select class first…';
-      cSubClass.appendChild(opt);
-      return;
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = cid ? 'Loading…' : 'Select class first…';
+    cSubClass.appendChild(opt);
+
+    if (!cid) return;
+
+    try {
+      const url = `${API}/get_subclasses.php?classID=${encodeURIComponent(cid)}&v=${encodeURIComponent(ASSET_VERSION)}`;
+
+      const res = await fetchNoStore(url);
+
+      let json = null;
+      try { json = await res.json(); } catch { json = null; }
+
+      if (!res.ok) {
+        console.error('get_subclasses HTTP error:', res.status, json);
+        cSubClass.innerHTML = `<option value="">Error ${res.status} loading subclasses</option>`;
+        return;
+      }
+
+      if (!json || json.ok !== true) {
+        console.error('get_subclasses API error:', json);
+        cSubClass.innerHTML = `<option value="">Could not load subclasses</option>`;
+        return;
+      }
+
+      const rows = Array.isArray(json.rows) ? json.rows
+                : Array.isArray(json.subclasses) ? json.subclasses
+                : [];
+
+      if (rows.length === 0) {
+        cSubClass.innerHTML = `<option value="">No subclasses found</option>`;
+        return;
+      }
+
+      cSubClass.innerHTML = `<option value="">Select…</option>`;
+
+      rows.forEach(r => {
+        const o = document.createElement('option');
+        o.value = String(r.subclassID);
+        o.textContent = String(r.name ?? '');
+        cSubClass.appendChild(o);
+      });
+
+    } catch (e) {
+      console.error('get_subclasses fetch failed:', e);
+      cSubClass.innerHTML = `<option value="">Network error</option>`;
     }
-
-    const res = await fetch(`${API}/get_subclasses.php?classID=${encodeURIComponent(classID)}`, {
-      headers: { 'Accept': 'application/json' }
-    });
-    const json = await res.json();
-
-    const blank = document.createElement('option');
-    blank.value = '';
-    blank.textContent = 'Select…';
-    cSubClass.appendChild(blank);
-
-    if (!json.ok) return;
-
-    json.rows.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = String(r.subclassID);
-      opt.textContent = r.name;
-      cSubClass.appendChild(opt);
-    });
   }
 
   // --------------------
@@ -371,9 +485,7 @@
       return;
     }
 
-    const res = await fetch(`${API}/get_class_info.php?classID=${encodeURIComponent(classID)}`, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const res = await fetchNoStore(`${API}/get_class_info.php?classID=${encodeURIComponent(classID)}&v=${encodeURIComponent(ASSET_VERSION)}`);
     const json = await res.json();
     if (!json.ok || !json.row) return;
 
@@ -404,13 +516,11 @@
     blank.textContent = 'Select…';
     aName.appendChild(blank);
 
-    const res = await fetch(`${API}/get_armors.php?level=${encodeURIComponent(lvl)}`, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const res = await fetchNoStore(`${API}/get_armors.php?level=${encodeURIComponent(lvl)}&v=${encodeURIComponent(ASSET_VERSION)}`);
     const json = await res.json();
     if (!json.ok) return;
 
-    json.rows.forEach(r => {
+    (json.rows || []).forEach(r => {
       const opt = document.createElement('option');
       opt.value = String(r.armorID);
       opt.textContent = r.name;
@@ -433,9 +543,7 @@
       return;
     }
 
-    const res = await fetch(`${API}/get_armor_info.php?armorID=${encodeURIComponent(armorID)}`, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const res = await fetchNoStore(`${API}/get_armor_info.php?armorID=${encodeURIComponent(armorID)}&v=${encodeURIComponent(ASSET_VERSION)}`);
     const json = await res.json();
     if (!json.ok || !json.row) return;
 
@@ -593,13 +701,11 @@
     blank.textContent = 'Select…';
     selectEl.appendChild(blank);
 
-    const res = await fetch(`${API}/get_weapons.php?primary=${encodeURIComponent(primaryFlag)}`, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const res = await fetchNoStore(`${API}/get_weapons.php?primary=${encodeURIComponent(primaryFlag)}&v=${encodeURIComponent(ASSET_VERSION)}`);
     const json = await res.json();
     if (!json.ok) return;
 
-    json.rows.forEach(r => {
+    (json.rows || []).forEach(r => {
       const opt = document.createElement('option');
       opt.value = String(r.weaponID);
       opt.textContent = r.name;
@@ -609,9 +715,7 @@
 
   async function loadWeaponInfo(weaponID) {
     if (!weaponID) return null;
-    const res = await fetch(`${API}/get_weapon_info.php?weaponID=${encodeURIComponent(weaponID)}`, {
-      headers: { 'Accept': 'application/json' }
-    });
+    const res = await fetchNoStore(`${API}/get_weapon_info.php?weaponID=${encodeURIComponent(weaponID)}&v=${encodeURIComponent(ASSET_VERSION)}`);
     const json = await res.json();
     return json.ok ? (json.row || null) : null;
   }
@@ -818,10 +922,12 @@
 
     const payload = collectPayload();
     try {
-      const res = await fetch(`${API}/save_all.php`, {
+      const res = await fetch(`${API}/save_all.php?v=${encodeURIComponent(ASSET_VERSION)}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
+        cache: 'no-store',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' },
+        body: JSON.stringify(payload),
+        credentials: 'same-origin'
       });
       const json = await res.json();
       if (!json.ok) {
@@ -867,4 +973,4 @@
       validateAll();
     }
   })();
-})();
+});

@@ -30,18 +30,74 @@ function json_out(array $p, int $s = 200): void {
 }
 
 function getCurrentUserId(): ?int {
-    if (isset($_SESSION['userID']) && is_numeric($_SESSION['userID'])) return (int)$_SESSION['userID'];
-    if (isset($_SESSION['user_id']) && is_numeric($_SESSION['user_id'])) return (int)$_SESSION['user_id'];
-    if (isset($_SESSION['user']['id']) && is_numeric($_SESSION['user']['id'])) return (int)$_SESSION['user']['id'];
-    if (isset($_SESSION['user']['userID']) && is_numeric($_SESSION['user']['userID'])) return (int)$_SESSION['user']['userID'];
+    // NEW: your newer auth layout
+    if (isset($_SESSION['auth']['userID']) && is_numeric($_SESSION['auth']['userID'])) {
+        $v = (int)$_SESSION['auth']['userID'];
+        return $v > 0 ? $v : null;
+    }
+
+    // legacy variants
+    if (isset($_SESSION['userID']) && is_numeric($_SESSION['userID'])) {
+        $v = (int)$_SESSION['userID'];
+        return $v > 0 ? $v : null;
+    }
+    if (isset($_SESSION['user_id']) && is_numeric($_SESSION['user_id'])) {
+        $v = (int)$_SESSION['user_id'];
+        return $v > 0 ? $v : null;
+    }
+    if (isset($_SESSION['user']['id']) && is_numeric($_SESSION['user']['id'])) {
+        $v = (int)$_SESSION['user']['id'];
+        return $v > 0 ? $v : null;
+    }
+    if (isset($_SESSION['user']['userID']) && is_numeric($_SESSION['user']['userID'])) {
+        $v = (int)$_SESSION['user']['userID'];
+        return $v > 0 ? $v : null;
+    }
     return null;
+}
+
+/**
+ * SQLite helpers
+ */
+function table_exists(Database $db, string $table): bool {
+    $row = $db->fetch(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name=:t LIMIT 1",
+        [':t' => $table]
+    );
+    return (bool)$row;
+}
+
+function assert_fk_exists(Database $db, string $table, string $pkCol, int $id, string $label): void {
+    if ($id <= 0) return; // optional field
+    if (!table_exists($db, $table)) {
+        throw new RuntimeException("Missing table '{$table}' (needed for {$label} FK check).");
+    }
+    $row = $db->fetch(
+        "SELECT {$pkCol} AS id FROM {$table} WHERE {$pkCol} = :id LIMIT 1",
+        [':id' => $id]
+    );
+    if (!$row) {
+        throw new RuntimeException("Invalid {$label}: {$id} (not found in {$table}.{$pkCol})");
+    }
 }
 
 $userID = getCurrentUserId();
 if ($userID === null) json_out(['ok' => false, 'error' => 'Not logged in'], 401);
 
+$step = 'init';
+
 try {
     $db = Database::getInstance($root . '/Database/Daggerheart.db');
+
+    // HARD CHECK: user must exist (prevents FK fail on character.userID)
+    $step = 'check-user';
+    if (!table_exists($db, 'user')) {
+        throw new RuntimeException("Missing table 'user' (cannot validate current user).");
+    }
+    $u = $db->fetch('SELECT userID FROM "user" WHERE userID = :uid LIMIT 1', [':uid' => $userID]);
+    if (!$u) {
+        json_out(['ok' => false, 'error' => 'Session user does not exist in DB (please re-login)'], 401);
+    }
 
     $raw = file_get_contents('php://input');
     $data = json_decode($raw ?: '[]', true, 512, JSON_THROW_ON_ERROR);
@@ -53,7 +109,7 @@ try {
     $gear        = $data['gear'] ?? [];
     $inventory   = $data['inventory'] ?? [];
 
-    // NEW: domain cards (filenames)
+    // domain cards (filenames)
     $domainCards = $data['domainCards'] ?? [];
 
     $name     = trim((string)($basics['name'] ?? ''));
@@ -66,12 +122,20 @@ try {
     $subclassID  = (int)($basics['subclassID'] ?? 0);
     $communityID = (int)($basics['communityID'] ?? 0);
 
-    // ---- Validate minimum
+    // Validate minimum
     if ($name === '' || $pronouns === '' || $heritageID <= 0 || $classID <= 0 || $level <= 0) {
         json_out(['ok' => false, 'error' => 'Basics incomplete'], 400);
     }
 
-    // ---- Validate trait distribution
+    // Validate FK IDs exist (prevents FOREIGN KEY constraint failed)
+    $step = 'fk-validate-basics';
+    assert_fk_exists($db, 'heritage',  'heritageID',  $heritageID,  'heritageID');
+    assert_fk_exists($db, 'class',     'classID',     $classID,     'classID');
+    // optional
+    if ($subclassID > 0)  assert_fk_exists($db, 'subclass',  'subclassID',  $subclassID,  'subclassID');
+    if ($communityID > 0) assert_fk_exists($db, 'community', 'communityID', $communityID, 'communityID');
+
+    // Trait distribution
     $strength  = (int)($traits['strength'] ?? 0);
     $agility   = (int)($traits['agility'] ?? 0);
     $finesse   = (int)($traits['finesse'] ?? 0);
@@ -85,19 +149,27 @@ try {
     $pool = [-1, 0, 0, 1, 1, 2];
     if ($vals !== $pool) json_out(['ok' => false, 'error' => 'Invalid trait distribution'], 400);
 
-    // ---- Defense
+    // Defense
     $evasion = (int)($def['evasion'] ?? 0);
     $armor   = (int)($def['armor'] ?? 0);
     $armorID = (int)($def['armorID'] ?? 0);
 
-    // ---- Gear weapons
+    // armor FK check (optional)
+    $step = 'fk-validate-armor';
+    if ($armorID > 0) {
+        assert_fk_exists($db, 'armor', 'armorID', $armorID, 'armorID');
+    }
+
+    // Gear weapons
     $primaryWeaponID   = (int)($gear['primaryWeaponID'] ?? 0);
     $secondaryWeaponID = (int)($gear['secondaryWeaponID'] ?? 0);
 
-    // ---- Start transaction
+    // Start transaction
+    $step = 'begin';
     $db->execute("BEGIN");
 
     // 1) Insert character (NEW each time)
+    $step = 'insert-character';
     $db->execute(
         "INSERT INTO character (userID, name, pronouns, level, heritageID, classID, subclassID, communityID, evasion, armor)
          VALUES (:uid,:name,:pro,:lvl,:hid,:clid,:scid,:comid,:eva,:arm)",
@@ -106,12 +178,12 @@ try {
             ':name'  => $name,
             ':pro'   => $pronouns,
             ':lvl'   => $level,
-            ':hid'   => $heritageID ?: null,
-            ':clid'  => $classID ?: null,
-            ':scid'  => $subclassID ?: null,
-            ':comid' => $communityID ?: null,
-            ':eva'   => $evasion ?: null,
-            ':arm'   => $armor ?: null
+            ':hid'   => $heritageID,
+            ':clid'  => $classID,
+            ':scid'  => ($subclassID > 0 ? $subclassID : null),
+            ':comid' => ($communityID > 0 ? $communityID : null),
+            ':eva'   => ($evasion > 0 ? $evasion : null),
+            ':arm'   => ($armor > 0 ? $armor : null),
         ]
     );
 
@@ -119,6 +191,7 @@ try {
     if ($characterID <= 0) throw new RuntimeException("Failed to create character");
 
     // 2) character_stats
+    $step = 'upsert-character-stats';
     $db->execute(
         "INSERT INTO character_stats (characterID, strength, agility, finesse, instinct, presence, knowledge, HP)
          VALUES (:cid,:str,:agi,:fin,:ins,:pre,:kno,:hp)
@@ -143,6 +216,7 @@ try {
     );
 
     // 3) character_armor (active armor)
+    $step = 'upsert-character-armor';
     if ($armorID > 0) {
         $db->execute(
             "INSERT INTO character_armor (characterID, armorID)
@@ -153,6 +227,7 @@ try {
     }
 
     // 4) experiences replace-all
+    $step = 'replace-experiences';
     $db->execute("DELETE FROM character_experience WHERE characterID = :cid", [':cid' => $characterID]);
     if (is_array($experiences)) {
         $clean = [];
@@ -171,7 +246,8 @@ try {
         }
     }
 
-    // 5) weapons replace-all (character_weapon)
+    // 5) weapons replace-all
+    $step = 'replace-weapons';
     $db->execute("DELETE FROM character_weapon WHERE characterID = :cid", [':cid' => $characterID]);
 
     if ($primaryWeaponID > 0) {
@@ -201,6 +277,7 @@ try {
     }
 
     // 6) inventory replace-all
+    $step = 'replace-inventory';
     $db->execute("DELETE FROM character_inventory WHERE characterID = :cid", [':cid' => $characterID]);
     if (is_array($inventory)) {
         $map = [];
@@ -219,7 +296,6 @@ try {
 
             $key = str_lower($item) . '|' . str_lower($desc);
 
-            // Merge duplicates by key (sum amounts)
             if (!isset($map[$key])) {
                 $map[$key] = ['item' => $item, 'desc' => $desc, 'amt' => 0];
             }
@@ -235,11 +311,11 @@ try {
         }
     }
 
-    // 7) domain cards replace-all (character_domain_card)
+    // 7) domain cards replace-all
+    $step = 'replace-domain-cards';
     $db->execute("DELETE FROM character_domain_card WHERE characterID = :cid", [':cid' => $characterID]);
 
     if (is_array($domainCards)) {
-        // Normalize, unique, max 2
         $domainCards = array_values(array_unique(array_filter(array_map(
             fn($x) => trim((string)$x),
             $domainCards
@@ -250,7 +326,6 @@ try {
         }
 
         foreach ($domainCards as $file) {
-            // expected: DomainID_Level_Name.jpg  (case-insensitive .jpg)
             if (!preg_match('/^(\d+)_(\d+)_(.+)\.jpg$/i', $file, $m)) {
                 throw new RuntimeException("Invalid domain card filename: " . $file);
             }
@@ -261,6 +336,11 @@ try {
 
             if ($did <= 0 || $lvl <= 0) {
                 throw new RuntimeException("Invalid domain card values in: " . $file);
+            }
+
+            // FK check: domain must exist (only if you have a domain table)
+            if (table_exists($db, 'domain')) {
+                assert_fk_exists($db, 'domain', 'domainID', $did, 'domainID');
             }
 
             if (str_len($n) > 200) $n = str_cut($n, 200);
@@ -278,10 +358,18 @@ try {
         }
     }
 
+    $step = 'commit';
     $db->execute("COMMIT");
+
     json_out(['ok' => true, 'characterID' => $characterID]);
 
 } catch (Throwable $e) {
     try { if (isset($db)) $db->execute("ROLLBACK"); } catch (Throwable $ignore) {}
-    json_out(['ok' => false, 'error' => $e->getMessage()], 500);
+
+    // Important: return step so you instantly see which statement failed
+    json_out([
+        'ok' => false,
+        'error' => $e->getMessage(),
+        'step' => $step
+    ], 500);
 }

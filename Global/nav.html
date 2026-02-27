@@ -1,8 +1,4 @@
 <!-- /Global/nav.html -->
-<head>
-  <link rel="icon" type="image/x-icon" href="/img/favico.png">
-</head>
-
 <nav class="navbar navbar-expand-lg nav-blur sticky-top">
   <div class="container py-2">
     <a class="navbar-brand d-flex align-items-center gap-2" href="../index.php">
@@ -56,3 +52,42 @@
     </div>
   </div>
 </nav>
+
+<script>
+/**
+ * Force favicon from nav.html (works even if nav is included inside <body>).
+ * It injects/updates <link rel="icon"> in document.head.
+ */
+(function ensureFavicon() {
+  const faviconPath = "/favicon.ico";
+  const cacheBuster = "v=2"; // bump this if you change the icon
+  const href = faviconPath + "?" + cacheBuster;
+
+  function upsertLink(rel, type, sizes) {
+    const sel = `link[rel="${rel}"]` + (sizes ? `[sizes="${sizes}"]` : "");
+    let link = document.head.querySelector(sel);
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = rel;
+      if (type) link.type = type;
+      if (sizes) link.sizes = sizes;
+      document.head.appendChild(link);
+    }
+    link.href = href;
+    return link;
+  }
+
+  // Ensure head exists (it always should, but just in case)
+  if (!document.head) return;
+
+  // Common variants
+  upsertLink("icon", "image/png", "32x32");
+  upsertLink("icon", "image/png", "16x16");
+  upsertLink("icon", "image/png", null);
+  upsertLink("shortcut icon", null, null);
+  upsertLink("apple-touch-icon", null, null);
+
+  // (Optional) some browsers request /favicon.ico by default.
+  // If you want, also place a real /favicon.ico at project root.
+})();
+</script>
