@@ -281,4 +281,111 @@ if ($action === 'roll_history') {
   json_out(['ok' => true, 'history' => load_roll_history($db, $userId, $characterId, 10)]);
 }
 
+// -----------------------
+// Inventory (CRUD)
+// -----------------------
+if ($action === 'inv_list') {
+  if (!isset($_SESSION['userID'])) json_out(['ok'=>false,'error'=>'Not logged in'], 401);
+
+  $characterId = (int)($_POST['characterID'] ?? 0);
+  if ($characterId <= 0) json_out(['ok'=>false,'error'=>'characterID missing'], 400);
+
+  // ownership
+  $own = $db->fetch("SELECT userID FROM character WHERE characterID = :cid LIMIT 1", [':cid'=>$characterId]);
+  if (!$own) json_out(['ok'=>false,'error'=>'Character not found'], 404);
+  if ((int)$own['userID'] !== (int)$_SESSION['userID']) json_out(['ok'=>false,'error'=>'Forbidden'], 403);
+
+  $rows = $db->fetchAll("
+    SELECT
+      itemID,
+      Item        AS item,
+      Description AS description,
+      Amount      AS amount
+    FROM character_inventory
+    WHERE characterID = :cid
+    ORDER BY itemID DESC
+  ", [':cid'=>$characterId]);
+
+  json_out(['ok'=>true,'rows'=> (is_array($rows)?$rows:[])]);
+}
+
+if ($action === 'inv_upsert') {
+  if (!isset($_SESSION['userID'])) json_out(['ok'=>false,'error'=>'Not logged in'], 401);
+
+  $characterId = (int)($_POST['characterID'] ?? 0);
+  if ($characterId <= 0) json_out(['ok'=>false,'error'=>'characterID missing'], 400);
+
+  // ownership
+  $own = $db->fetch("SELECT userID FROM character WHERE characterID = :cid LIMIT 1", [':cid'=>$characterId]);
+  if (!$own) json_out(['ok'=>false,'error'=>'Character not found'], 404);
+  if ((int)$own['userID'] !== (int)$_SESSION['userID']) json_out(['ok'=>false,'error'=>'Forbidden'], 403);
+
+  $itemID = (int)($_POST['itemID'] ?? 0);
+  $item = trim((string)($_POST['item'] ?? ''));
+  $description = trim((string)($_POST['description'] ?? ''));
+  $amount = (int)($_POST['amount'] ?? 0);
+
+  if ($item === '') json_out(['ok'=>false,'error'=>'Item required'], 400);
+  if ($amount < 0) $amount = 0;
+
+  if ($itemID > 0) {
+    // update (must belong to character)
+    $exists = $db->fetch("
+      SELECT itemID FROM character_inventory
+      WHERE itemID = :id AND characterID = :cid
+      LIMIT 1
+    ", [':id'=>$itemID, ':cid'=>$characterId]);
+
+    if (!$exists) json_out(['ok'=>false,'error'=>'Item not found'], 404);
+
+    $db->execute("
+      UPDATE character_inventory
+      SET Item = :item, Description = :desc, Amount = :amt
+      WHERE itemID = :id AND characterID = :cid
+    ", [
+      ':item'=>$item,
+      ':desc'=>$description,
+      ':amt'=>$amount,
+      ':id'=>$itemID,
+      ':cid'=>$characterId
+    ]);
+
+    json_out(['ok'=>true]);
+  }
+
+  // insert
+  $db->execute("
+    INSERT INTO character_inventory (characterID, Item, Description, Amount)
+    VALUES (:cid, :item, :desc, :amt)
+  ", [
+    ':cid'=>$characterId,
+    ':item'=>$item,
+    ':desc'=>$description,
+    ':amt'=>$amount
+  ]);
+
+  json_out(['ok'=>true]);
+}
+
+if ($action === 'inv_delete') {
+  if (!isset($_SESSION['userID'])) json_out(['ok'=>false,'error'=>'Not logged in'], 401);
+
+  $characterId = (int)($_POST['characterID'] ?? 0);
+  $itemID = (int)($_POST['itemID'] ?? 0);
+  if ($characterId <= 0) json_out(['ok'=>false,'error'=>'characterID missing'], 400);
+  if ($itemID <= 0) json_out(['ok'=>false,'error'=>'itemID missing'], 400);
+
+  // ownership
+  $own = $db->fetch("SELECT userID FROM character WHERE characterID = :cid LIMIT 1", [':cid'=>$characterId]);
+  if (!$own) json_out(['ok'=>false,'error'=>'Character not found'], 404);
+  if ((int)$own['userID'] !== (int)$_SESSION['userID']) json_out(['ok'=>false,'error'=>'Forbidden'], 403);
+
+  $db->execute("
+    DELETE FROM character_inventory
+    WHERE itemID = :id AND characterID = :cid
+  ", [':id'=>$itemID, ':cid'=>$characterId]);
+
+  json_out(['ok'=>true]);
+}
+
 json_out(['ok' => false, 'error' => 'Unknown action'], 400);
